@@ -12,7 +12,7 @@ export default function Login({ navigation }) {
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
                 <View style={{ flex: 9 }}></View>
                 <View style={styles.btnContainer}>
-                    <CustomButton title="시작하기" onPress={() => navigation.navigate("SelectActivity")} />
+                    <CustomButton title="로그인" onPress={() => navigation.navigate("SelectActivity")} />
                 </View>
             </ImageBackground>
         </View>
