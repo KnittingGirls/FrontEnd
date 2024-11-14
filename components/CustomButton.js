@@ -39,13 +39,11 @@ const styles = StyleSheet.create({
         height:40,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 10,
-        borderRadius: 5,
-        borderRadius: 15,
-        // marginLeft:'53%'
+        borderRadius: 10,
     },
     title: {
         fontSize: 20,
-        fontWeight:600,
+        // fontFamily: 'Maplestory',
+        fontWeight:'bold',
     },
 });

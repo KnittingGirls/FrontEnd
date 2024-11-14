@@ -5,12 +5,12 @@ import "react-native-gesture-handler";
 import CustomButton from '../components/CustomButton';
 
 export default function ShowPattern({ navigation }) {
-    const sweetHouse = require("../assets/sweetHouse.png");
+    const sweetHouse = require("../assets/background/sweetHouse.png");
 
     return (
         <View>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
-                <View style={styles.upload}>
+                <View style={styles.show}>
                     
                 </View>
                 <View style={styles.btnContainer}>
@@ -31,24 +31,27 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     image: {
-        flex: 1,
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
         // justifyContent: 'center',
         alignItems: 'center',
     },
-    upload: {
+    show: {
         width: '85%',
         marginTop: '70%',
-        height: '85vw',
+        flex:8,
         borderRadius: 10,
-        border: '#FFFFFF 2px solid',
+        borderWidth: 2,
+        borderColor: '#FFFFFF',
+        borderStyle: 'solid',
         backgroundColor: 'rgba(255,255,255,0.6)',
         marginLeft: 6,
         marginRight: 6,
+        marginBottom: '5%',
     },
     btnContainer: {
-        marginLeft: '48vw',
+        flex:2,
+        marginLeft: '48%',
         marginTop: '3%',
         alignItems: 'right',
     },

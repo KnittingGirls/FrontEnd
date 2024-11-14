@@ -6,6 +6,8 @@ import UploadImg from './Pages/UploadImg';
 import NewPattern from './Pages/NewPattern';
 import ShowPattern from './Pages/ShowPattern';
 import AdditionalInfo from './Pages/AdditionalInfo';
+import SelectActivity from './Pages/SelectActivity';
+import Login from './Pages/Login';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +17,8 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Home'>
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="SelectActivity" component={SelectActivity} options={{ headerShown: false, }} />
         <Stack.Screen name="NewPattern" component={NewPattern} options={{ headerShown: false, }} />
         <Stack.Screen name="SelectType" component={SelectType} options={{ headerShown: false, }} />
         <Stack.Screen name="UploadImg" component={UploadImg} options={{ headerShown: false, }} />
