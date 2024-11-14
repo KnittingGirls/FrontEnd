@@ -1,18 +1,18 @@
-import { StyleSheet, Text, View, ImageBackground, Dimensions, Image, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground, Dimensions } from 'react-native';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-import "react-native-gesture-handler";
 import CustomButton from '../components/CustomButton';
+// import "react-native-gesture-handler";
 
-export default function AdditionalInfo({ navigation }) {
-    const sweetHouse = require("../assets/background/sweetHouse.png");
+export default function Login({ navigation }) {
+    const sweetHouse = require("../assets/background/login.png");
 
     return (
         <View style={styles.container}>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
-                <View>
-                    <CustomButton title="입력 완료" onPress={() => navigation.navigate("ShowPattern")} />
+                <View style={{ flex: 9 }}></View>
+                <View style={styles.btnContainer}>
+                    <CustomButton title="시작하기" onPress={() => navigation.navigate("SelectActivity")} />
                 </View>
             </ImageBackground>
         </View>
@@ -21,16 +21,17 @@ export default function AdditionalInfo({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     image: {
-        flex: 1,
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
-        justifyContent: 'center',
+        // justifyContent: 'center',
+        flexDirection: 'column'
     },
+    btnContainer: {
+        flex: 1,
+        marginLeft: '20%',
+    }
 });

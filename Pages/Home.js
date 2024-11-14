@@ -5,13 +5,14 @@ import CustomButton from '../components/CustomButton';
 // import "react-native-gesture-handler";
 
 export default function Home({ navigation }) {
-    const sweetHouse = require("../assets/start.png");
+    const sweetHouse = require("../assets/background/start.png");
 
     return (
         <View style={styles.container}>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
+                <View style={{flex:9}}></View>
                 <View style={styles.btnContainer}>
-                    <CustomButton title="시작하기" onPress={() => navigation.navigate("NewPattern")} />
+                    <CustomButton title="시작하기" onPress={() => navigation.navigate("Login")} />
                 </View>
             </ImageBackground>
         </View>
@@ -20,19 +21,17 @@ export default function Home({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        // flex: 1,
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
     },
     image: {
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
-        justifyContent: 'center',
+        // justifyContent: 'center',
+        flexDirection:'column'
     },
     btnContainer: {
-        // height:'20%',
+        flex:1,
         marginLeft:'20%',
-        marginTop:'80vh',
-        alignItems:'right',
     }
 });

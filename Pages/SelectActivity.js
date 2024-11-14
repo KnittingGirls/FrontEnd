@@ -3,47 +3,47 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 // import AutoHeightImage from "react-native-auto-height-image";
 import "react-native-gesture-handler";
-export default function SelectType({ navigation}) {
-    const sweetHouse = require("../assets/background/sweetHouse.png");
+export default function SelectActivity({ navigation }) {
+    const background = require("../assets/background/path_simple.png");
     return (
         <View style={styles.container}>
-            <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
-                <View style={{ flex: 4 }}></View>
-                <View style={ styles.vertical}>
+            <ImageBackground source={background} resizeMode="cover" style={styles.image}>
+                <View style={{ flex: 2}}></View>
+                <View style={styles.vertical}>
                     <View style={styles.horizon}>
-                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("UploadImg")} >
+                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("NewPattern")} >
                             <Text style={styles.num}>01</Text>
-                            <Image source={require('../assets/SelectType/free-icon-christmas-sweater-2300218.png')}
+                            <Image source={require('../assets/SelectActivity/free-icon-knitting-2780135.png')}
                                 style={styles.img}
                             />
-                            <Text style={styles.title}>스웨터</Text>
+                            <Text style={styles.title}>도안 생성</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("UploadImg")}>
-                            <Text style={styles.num}>02</Text>                           
-                            <Image source={require('../assets/SelectType/free-icon-scarf-13420578.png')}
+                            <Text style={styles.num}>02</Text>
+                            <Image source={require('../assets/SelectActivity/free-icon-two-people-9426855.png')}
                                 style={styles.img}
                             />
-                            <Text style={styles.title}>목도리</Text>
+                            <Text style={styles.title}>커뮤니티</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.horizon}>
                         <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("UploadImg")} >
                             <Text style={styles.num}>03</Text>
-                            <Image source={require('../assets/SelectType/free-icon-winter-hat-616046.png')}
+                            <Image source={require('../assets/SelectActivity/free-icon-woman-4829575.png')}
                                 style={styles.img}
                             />
-                            <Text style={styles.title}>모자</Text>
+                            <Text style={styles.title}>마이 페이지</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("UploadImg")}>
                             <Text style={styles.num}>04</Text>
-                            <Image source={require('../assets/SelectType/free-icon-knitting-2975720.png')}
+                            <Image source={require('../assets/SelectActivity/free-icon-question-mark-9797431.png')}
                                 style={styles.img}
                             />
-                            <Text style={styles.title}>기타</Text>
+                            <Text style={styles.title}>문의하기</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{ flex: 0.5 }}></View>
+                <View style={{ flex: 2}}></View>
             </ImageBackground>
         </View>
     );
@@ -79,21 +79,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginLeft: 7,
         marginRight: 7,
-        height:'95%',
+        height: '95%',
         flex: 1,
-        
+        fontFamily:'MaplestoryLight',
     },
     horizon: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        flex:1,
+        flex: 1,
         marginTop: 5,
         marginBottom: 5,
-        alignItems:'center'
+        alignItems: 'center'
     },
     vertical: {
         marginLeft: '4%',
-        marginRight:'4%',
+        marginRight: '4%',
         width: '92%',
         flex: 6,
     },

@@ -10,6 +10,7 @@ export default function NewPattern({ navigation }) {
     return (
         <View style={styles.container}>
             <ImageBackground source={stepImg} resizeMode="cover" style={styles.image}>
+                <View style={{ flex: 9 }}></View>
                 <View style={styles.btnContainer}>
                     <CustomButton title="도안 생성" onPress={() => navigation.navigate("SelectType")} />                    
                 </View>
@@ -20,19 +21,18 @@ export default function NewPattern({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        // flex: 1,
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
     },
     image: {
-        flex: 1,
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
-        justifyContent: 'center',
+        // justifyContent: 'center',
+        flexDirection: 'column'
     },
     btnContainer: {
-        marginLeft: '55vw',
-        marginTop: '80vh',
-        alignItems: 'right',
-    },
+        flex: 1,
+        marginLeft: '55%',
+    }
 });
