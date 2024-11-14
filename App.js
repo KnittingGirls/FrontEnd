@@ -1,7 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import Home from './Pages/Home';
 import SelectType from './Pages/SelectType';
 import UploadImg from './Pages/UploadImg';
@@ -13,7 +11,6 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   // const Stack = createNativeStackNavigator();
-
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Home'>
