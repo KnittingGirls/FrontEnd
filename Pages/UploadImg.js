@@ -20,14 +20,14 @@ export default function UploadImg({ navigation }) {
   // 이미지 선택 함수
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       quality: 1,
     });
 
-    if (!result.cancelled && result.uri) {
-      setSelectedImage(result.uri); // 선택한 이미지의 URI 저장
-      console.log("선택한 이미지 URI:", result.uri); // 선택한 이미지 URI 로그
+    if (!result.canceled && result.assets[0].uri) {
+      setSelectedImage(result.assets[0].uri); // 선택한 이미지의 URI 저장
+      console.log("선택한 이미지 URI:", result.assets[0].uri); // 선택한 이미지 URI 로그
     } else {
       console.log("이미지를 선택하지 않았습니다.");
     }

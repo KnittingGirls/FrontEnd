@@ -42,7 +42,8 @@ export default function Login({ navigation }) {
                 <View style={{ flex: 9 }}></View>
                 <View style={styles.btnContainer}>
                     {/* 로그인 버튼 클릭 시 카카오 로그인 페이지로 이동 */}
-                    <CustomButton title="카카오 로그인" onPress={handleKakaoLogin} />
+                    {/* <CustomButton title="카카오 로그인" onPress={handleKakaoLogin} /> */}
+                    <CustomButton title="카카오 로그인" onPress={() => { navigation.navigate('SelectActivity') }} />
                 </View>
             </ImageBackground>
         </View>
