@@ -56,7 +56,7 @@ export default function UploadImg({ navigation }) {
     });
 
     try {
-      const response = await fetch('http://10.240.94.239:8080/api/images/upload', {
+      const response = await fetch('https://b101-14-37-30-64.ngrok-free.app/api/images/upload', {
         method: 'POST',
         body: formData, // FormData로 이미지 전송
       });
