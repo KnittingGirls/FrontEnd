@@ -20,7 +20,7 @@ export default function Login({ navigation }) {
         Linking.addEventListener('url', handleAuthCallback);
 
         return () => {
-            Linking.removeEventListener('url', handleAuthCallback);
+            Linking.removeAllListeners('url', handleAuthCallback);
         };
     }, [navigation]);
 
