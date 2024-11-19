@@ -33,7 +33,6 @@ export default function UploadImg({ navigation }) {
     }
   };
 
-  // 업로드 함수
   const uploadImage = async () => {
     if (!selectedImage) {
       alert("이미지를 선택하세요");
@@ -41,40 +40,47 @@ export default function UploadImg({ navigation }) {
     }
 
     const formData = new FormData();
-    formData.append("image", {
-      uri: selectedImage,
-      name: "upload.jpg", // 서버에 전달될 파일 이름
-      type: "image/jpeg", // 이미지 타입
+
+    // selectedImage는 파일 경로입니다.
+    const imageUri = selectedImage; // 선택된 이미지 URI
+    const fileName = imageUri.split('/').pop(); // 파일 이름 추출
+
+    // 파일 MIME 타입을 자동으로 추론하거나, 기본값을 설정
+    const mimeType = getMimeType(imageUri);  // getMimeType 함수 사용
+
+    // 이미지 파일을 FormData에 추가
+    formData.append('image', {
+      uri: imageUri,
+      type: mimeType,   // 이미지 MIME 타입
+      name: fileName,   // 파일 이름
     });
 
     try {
-      console.log("이미지 업로드 요청 시작");
-
-      const response = await fetch("http://localhost:8080/api/images/upload", {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
+      const response = await fetch('http://10.240.94.239:8080/api/images/upload', {
+        method: 'POST',
+        body: formData, // FormData로 이미지 전송
       });
 
-      console.log("응답 상태:", response.status); // 응답 상태 코드 로그
-      console.log("응답 텍스트:", await response.text());
-
       if (!response.ok) {
-        console.error("서버 오류:", response.status, response.statusText);
-        alert("서버 오류: 이미지 업로드 실패");
-        return;
+        throw new Error(`서버 오류: ${response.status}`);
       }
 
-      const result = await response.text();
-      alert(result); // 서버로부터의 응답 표시
+      const responseData = await response.json();
+      console.log('이미지 업로드 성공', responseData);
     } catch (error) {
-      console.error("요청 오류:", error);
-      alert("이미지 업로드 실패");
+      console.error('업로드 실패', error);
     }
   };
 
+const getMimeType = (uri) => {
+  const extension = uri.split('.').pop().toLowerCase();  // 확장자 추출
+  const mimeTypes = {
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    png: "image/png",
+  };
+  return mimeTypes[extension] || "application/octet-stream";  // 기본 MIME 타입
+};
   return (
     <View>
       <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
