@@ -31,8 +31,7 @@ export default function UploadImg({ navigation }) {
       console.log("이미지를 선택하지 않았습니다.");
     }
   };
-
-  // 업로드 함수
+  // 업로드 함수 수정
   const uploadImage = async () => {
     if (!selectedImage || !selectedImage.uri) {
       alert("이미지를 선택하세요");
@@ -42,16 +41,15 @@ export default function UploadImg({ navigation }) {
     // FormData 생성
     const formData = new FormData();
     formData.append("image", {
-      uri: selectedImage.uri,
-      type: "image/jpeg", // 또는 적절한 MIME 타입 (예: image/png)
-      name: "uploaded_image.jpg", // 백엔드에서 요구하는 파일 이름
+      uri: selectedImage,
+      name: "upload.jpg", // 서버에 전달될 파일 이름
+      type: "image/jpeg", // 이미지 타입
     });
 
     try {
       console.log("이미지 업로드 요청 시작");
 
-      //서버 돌리는 컴퓨터에서 IP 확인 후 수정, 테스트
-      const response = await fetch("http://localhost:8080/api/images/upload", {
+      const response = await fetch("http://10.240.31.220:8080/api/images/upload", {
         method: "POST",
         body: formData,
       });
