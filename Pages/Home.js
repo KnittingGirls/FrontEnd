@@ -2,7 +2,6 @@ import { StyleSheet, Text, View, ImageBackground, Dimensions } from 'react-nativ
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import CustomButton from '../components/CustomButton';
-// import "react-native-gesture-handler";
 
 export default function Home({ navigation }) {
     const sweetHouse = require("../assets/background/start.png");
