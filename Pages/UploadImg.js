@@ -49,7 +49,8 @@ export default function UploadImg({ navigation }) {
     try {
       console.log("이미지 업로드 요청 시작");
 
-      const response = await fetch("http://10.240.31.220:8080/api/images/upload", {
+       //서버 IP 주소로 아래 주소 변경 필요 
+      const response = await fetch("http://localhost:8080/api/images/upload", {
         method: "POST",
         body: formData,
       });
