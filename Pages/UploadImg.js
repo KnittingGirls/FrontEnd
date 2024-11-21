@@ -20,14 +20,13 @@ export default function UploadImg({ navigation }) {
   // 이미지 선택 함수
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
+      mediaType: ['photo'],
       allowsEditing: true,
       quality: 1,
     });
-
+    // console.log(result);
     if (!result.canceled && result.assets[0].uri) {
-      setSelectedImage(result.assets[0].uri); // 선택한 이미지의 URI 저장
-      console.log("선택한 이미지 URI:", result.assets[0].uri); // 선택한 이미지 URI 로그
+      setSelectedImage(result.assets[0]); // 선택한 이미지의 정보 저장
     } else {
       console.log("이미지를 선택하지 않았습니다.");
     }
@@ -35,31 +34,30 @@ export default function UploadImg({ navigation }) {
 
   // 업로드 함수
   const uploadImage = async () => {
-    if (!selectedImage) {
+    if (!selectedImage || !selectedImage.uri) {
       alert("이미지를 선택하세요");
       return;
     }
 
+    // FormData 생성
     const formData = new FormData();
     formData.append("image", {
-      uri: selectedImage,
-      name: "upload.jpg", // 서버에 전달될 파일 이름
-      type: "image/jpeg", // 이미지 타입
+      uri: selectedImage.uri,
+      type: "image/jpeg", // 또는 적절한 MIME 타입 (예: image/png)
+      name: "uploaded_image.jpg", // 백엔드에서 요구하는 파일 이름
     });
 
     try {
       console.log("이미지 업로드 요청 시작");
 
+      //서버 돌리는 컴퓨터에서 IP 확인 후 수정, 테스트
       const response = await fetch("http://localhost:8080/api/images/upload", {
         method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
         body: formData,
       });
 
-      console.log("응답 상태:", response.status); // 응답 상태 코드 로그
-      console.log("응답 텍스트:", await response.text());
+      console.log("응답 상태:", response.status);
+      const result = await response.text();
 
       if (!response.ok) {
         console.error("서버 오류:", response.status, response.statusText);
@@ -67,8 +65,7 @@ export default function UploadImg({ navigation }) {
         return;
       }
 
-      const result = await response.text();
-      alert(result); // 서버로부터의 응답 표시
+      alert("업로드 성공: " + result);
     } catch (error) {
       console.error("요청 오류:", error);
       alert("이미지 업로드 실패");
@@ -80,7 +77,7 @@ export default function UploadImg({ navigation }) {
       <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
         <View style={styles.upload}>
           {selectedImage && (
-            <Image source={{ uri: selectedImage }} style={styles.img} />
+            <Image source={{ uri: selectedImage.uri }} style={styles.img} />
           )}
           <TouchableOpacity onPress={pickImage} style={styles.pickButton}>
             <Text>이미지 선택</Text>
