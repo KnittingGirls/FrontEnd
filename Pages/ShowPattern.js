@@ -5,11 +5,12 @@ import "react-native-gesture-handler";
 import CustomButton from '../components/CustomButton';
 
 export default function ShowPattern({ navigation }) {
-    const sweetHouse = require("../assets/background/sweetHouse.png");
+    const sweetHouse = require("../assets/background/sweetHouse_1.png");
 
     return (
         <View>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
+                <View style={{ flex: 1 }}></View>
                 <View style={styles.show}>
                     
                 </View>

@@ -5,7 +5,7 @@ import {
     StyleSheet,
 } from 'react-native';
 
-export default class CustomButton extends Component {
+export default class BigCustomBtn extends Component {
     static defaultProps = {
         title: 'untitled',
         buttonColor: 'rgba(255,255,255,0.6)',
@@ -35,7 +35,7 @@ export default class CustomButton extends Component {
 
 const styles = StyleSheet.create({
     button: {
-        width: 100,
+        width: 140,
         height:40,
         alignItems: 'center',
         justifyContent: 'center',
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         marginRight:5
     },
     title: {
-        fontSize: 16,
+        fontSize: 18,
         // fontFamily: 'Maplestory-Bold',
         fontWeight:'bold',
     },
