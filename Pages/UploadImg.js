@@ -43,6 +43,7 @@ export default function UploadImg({ navigation }) {
 
             //서버 IP 주소로 아래 주소 변경 필요 
             const response = await fetch("http://localhost:8080/api/images/upload", {
+
                 method: "POST",
                 body: formData,
             });
@@ -57,6 +58,8 @@ export default function UploadImg({ navigation }) {
             }
 
             alert("업로드 성공: " + result);
+            navigation.navigate("ShowPattern");            
+
 
         } catch (error) {
             console.error("요청 오류:", error);
@@ -78,9 +81,6 @@ export default function UploadImg({ navigation }) {
                 </View>
                 <View style={styles.btnContainer}>
                     <CustomButton title="업로드" onPress={uploadImage} />
-                    {/* <TouchableOpacity onPress={uploadImage} style={styles.uploadButton}>
-            <Text>업로드</Text>
-          </TouchableOpacity> */}
                 </View>
             </ImageBackground>
         </View>

@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View, ImageBackground, Dimensions } from 'react-native';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-import CustomButton from '../components/CustomButton';
 import "react-native-gesture-handler";
+import BigCustomBtn from '../components/BigCustomBtn';
 
 export default function NewPattern({ navigation }) {
     const stepImg = require("../assets/background/patternsteps.png");
@@ -10,9 +10,9 @@ export default function NewPattern({ navigation }) {
     return (
         <View style={styles.container}>
             <ImageBackground source={stepImg} resizeMode="cover" style={styles.image}>
-                <View style={{ flex: 9 }}></View>
+                <View style={{ flex: 12 }}></View>
                 <View style={styles.btnContainer}>
-                    <CustomButton title="도안 생성" onPress={() => navigation.navigate("SelectType")} />                    
+                    <BigCustomBtn title="도안 생성" onPress={() => navigation.navigate("SelectType")} />                    
                 </View>
             </ImageBackground>
         </View>
@@ -33,6 +33,6 @@ const styles = StyleSheet.create({
     },
     btnContainer: {
         flex: 1,
-        marginLeft: '55%',
+        marginLeft: '60%',
     }
 });

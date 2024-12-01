@@ -43,7 +43,7 @@ export default function SelectType({ navigation}) {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{ flex: 0.5 }}></View>
+                <View style={{ flex: 1}}></View>
             </ImageBackground>
         </View>
     );
