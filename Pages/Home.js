@@ -3,6 +3,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import BigCustomBtn from '../components/BigCustomBtn';
 
+
 export default function Home({ navigation }) {
     const sweetHouse = require("../assets/background/start_1.png");
     return (

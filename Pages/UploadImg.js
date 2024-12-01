@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View, ImageBackground, Dimensions, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from "react";
+import {
+    StyleSheet,Text,View,ImageBackground,Dimensions,TouchableOpacity,Image,} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import CustomButton from "../components/CustomButton";
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-// import AutoHeightImage from "react-native-auto-height-image";
-import "react-native-gesture-handler";
-import CustomButton from '../components/CustomButton';
 
 export default function UploadImg({ navigation }) {
     const sweetHouse = require("../assets/background/sweetHouse_1.png");
@@ -40,7 +42,8 @@ export default function UploadImg({ navigation }) {
             console.log("이미지 업로드 요청 시작");
 
             //서버 IP 주소로 아래 주소 변경 필요 
-            const response = await fetch("http://10.210.33.1:8080/api/images/upload", {
+            const response = await fetch("http://localhost:8080/api/images/upload", {
+
                 method: "POST",
                 body: formData,
             });
@@ -57,6 +60,7 @@ export default function UploadImg({ navigation }) {
             alert("업로드 성공: " + result);
             navigation.navigate("ShowPattern");            
 
+
         } catch (error) {
             console.error("요청 오류:", error);
             alert("이미지 업로드 실패");
@@ -66,55 +70,57 @@ export default function UploadImg({ navigation }) {
     return (
         <View>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
+                <View style={{ flex: 1 }}></View>
                 <View style={styles.upload}>
-                    <Text>sdf</Text>
-                    {/* <Image
-                        source={
-                            response ? { uri: response.assets[0].uri } : 0
-                        }
-                        style={styles.img}
-                    /> */}
+                    {selectedImage && (
+                        <Image source={{ uri: selectedImage.uri }} style={styles.img} />
+                    )}
+                    <TouchableOpacity onPress={pickImage} style={styles.pickButton}>
+                        <Text>이미지 선택</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={styles.btnContainer}>
                     <CustomButton title="업로드" onPress={uploadImage} />
                 </View>
-                
             </ImageBackground>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
     image: {
-        // flex: 1,
         width: SCREEN_WIDTH,
         height: SCREEN_HEIGHT,
-        alignItems: 'center',
+        alignItems: "center",
     },
     upload: {
-        width: '85%',
-        marginTop: '70%',
-        flex:8,
+        width: "85%",
+        marginTop: "70%",
+        flex: 8,
         borderRadius: 10,
         borderWidth: 2,
-        borderColor: '#FFFFFF',
-        borderStyle: 'solid',
-        backgroundColor: 'rgba(255,255,255,0.6)',
+        borderColor: "#FFFFFF",
+        backgroundColor: "rgba(255,255,255,0.6)",
         marginLeft: 6,
         marginRight: 6,
-        marginBottom:'5%',
+        marginBottom: "5%",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    pickButton: {
+        padding: 10,
+        backgroundColor: "#ddd",
+        borderRadius: 5,
+        marginTop: 10,
     },
     btnContainer: {
-        flex:2,
-        marginLeft: '48%',
-        marginTop: '3%',
-        alignItems: 'right',
+        flex: 2,
+        marginLeft: "55%",
+        marginTop: "3%",
+    },
+    img: {
+        width: 200,
+        height: 200,
+        marginBottom: 10,
     },
 });
