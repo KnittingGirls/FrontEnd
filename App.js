@@ -16,6 +16,7 @@ const Stack = createNativeStackNavigator();
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import Community from './Pages/Community';
 
 const Drawer = createDrawerNavigator();
 
@@ -38,6 +39,7 @@ export default function App() {
         <Drawer.Screen name="UploadImg" component={UploadImg} options={options} />
         <Drawer.Screen name="ShowPattern" component={ShowPattern} options={options} />
         <Drawer.Screen name="AdditionalInfo" component={AdditionalInfo} options={options} />
+        <Drawer.Screen name="Community" component={Community} options={options} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
