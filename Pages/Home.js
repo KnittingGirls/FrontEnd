@@ -21,11 +21,11 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
     },
     image: {
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: '100%',
         // justifyContent: 'center',
         flexDirection:'column'
     },

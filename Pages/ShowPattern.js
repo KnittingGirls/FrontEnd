@@ -11,11 +11,14 @@ export default function ShowPattern({ navigation }) {
         <View>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
                 <View style={{ flex: 1 }}></View>
-                <View style={styles.show}>
-                    
-                </View>
+                {/* <View style={styles.show}> */}
+                    <Image source={require('../assets/ShowPattern/example.jpg')}
+                        style={styles.show}
+                    />
+                {/* </View> */}
                 <View style={styles.btnContainer}>
-                    <CustomButton title="저장하기" onPress={() => navigation.navigate("Home")} />
+                    <CustomButton title="저장하기" onPress={() => alert("저장이 완료되었습니다!")} />
+                    <CustomButton title="완료" onPress={() => navigation.navigate("Home")} />
                 </View>
 
             </ImageBackground>
@@ -52,8 +55,9 @@ const styles = StyleSheet.create({
     },
     btnContainer: {
         flex:2,
-        marginLeft: '48%',
+        marginLeft: '33%',
         marginTop: '3%',
         alignItems: 'right',
+        flexDirection:'row'
     },
 });

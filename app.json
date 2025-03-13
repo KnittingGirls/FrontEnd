@@ -1,35 +1,34 @@
 {
   "expo": {
-    "name": "FrontEnd3",
-    "slug": "FrontEnd3",
+    "name": "frontend2",
+    "slug": "frontend2",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain"
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to allow image uploads.",
-        "NSCameraUsageDescription": "This app needs access to your camera to allow photo capturing."
-      }
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.frontend",
-      "permissions": [
-        "CAMERA",
-        "WRITE_EXTERNAL_STORAGE",
-        "READ_EXTERNAL_STORAGE"
-      ]
+      "package": "com.ujin5005.frontend"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4c0de765-52cf-420c-b815-2711bde62a81"
+      }
     }
   }
 }

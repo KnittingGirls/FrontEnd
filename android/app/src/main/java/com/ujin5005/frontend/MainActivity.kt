@@ -1,4 +1,4 @@
-package com.anonymous.frontend
+package com.ujin5005.frontend
 
 import android.os.Build
 import android.os.Bundle
