@@ -1,11 +1,13 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import React, { useState, useEffect } from 'react';
+
+import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 
 export default function Community() {
     const [posts, setPosts] = useState([]);
     const [newPostContent, setNewPostContent] = useState("");
+    const [newHashtags, setNewHashtags] = useState("");
     const [searchTag, setSearchTag] = useState("");
     const [searchNickname, setSearchNickname] = useState("");
     const nickname = '서자영';
@@ -23,8 +25,10 @@ export default function Community() {
 
     // 게시글 작성
     const createPost = async () => {
+        const hashtagsArray = newHashtags.split(',').map(tag => tag.trim());
+
         const formData = new FormData();
-        formData.append('postDto', JSON.stringify({ content: newPostContent, hashtags: ["#테스트"] }));
+        formData.append('postDto', JSON.stringify({ content: newPostContent, hashtags: hashtagsArray }));
 
         try {
             await fetch(`http://localhost:8080/posts?nickname=${nickname}`, {
@@ -32,6 +36,7 @@ export default function Community() {
                 body: formData,
             });
             setNewPostContent("");
+            setNewHashtags("");
             fetchPosts();
         } catch (error) {
             console.error('게시글 작성 에러:', error);
@@ -132,9 +137,15 @@ export default function Community() {
             {/* 게시글 작성 */}
             <TextInput
                 style={styles.input}
-                placeholder="게시글 내용 입력..."
+                placeholder="내용"
                 value={newPostContent}
                 onChangeText={setNewPostContent}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="해시태그 (쉼표로 구분 ex. #태그1, #태그2)"
+                value={newHashtags}
+                onChangeText={setNewHashtags}
             />
             <TouchableOpacity style={styles.button} onPress={createPost}>
                 <Text style={styles.buttonText}>게시글 작성</Text>
@@ -143,7 +154,7 @@ export default function Community() {
             {/* 해시태그 검색 */}
             <TextInput
                 style={styles.input}
-                placeholder="해시태그 검색..."
+                placeholder="검색할 해시태그"
                 value={searchTag}
                 onChangeText={setSearchTag}
             />
@@ -154,7 +165,7 @@ export default function Community() {
             {/* 작성자로 검색 */}
             <TextInput
                 style={styles.input}
-                placeholder="작성자 검색..."
+                placeholder="검색할 작성자명"
                 value={searchNickname}
                 onChangeText={setSearchNickname}
             />
