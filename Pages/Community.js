@@ -1,40 +1,140 @@
-import { Text, Linking, StyleSheet, View, ImageBackground, Dimensions } from 'react-native';
-import BigCustomBtn from '../components/BigCustomBtn';
-import { Button, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import Community from './Pages/Community';
+
+import { useState, useEffect } from 'react';
 
 export default function Community() {
-    // 게시글 내용
-    const [contents, setContents] = useState("글 내용");
-    // 작성자 닉네임
-    const [nickname, setNickname] = useState("작성자 닉네임");
-    // 댓글
-    const [reply, setReply] = useState([
-        ["댓글 닉네임1", "댓글 내용1"],
-        ["댓글 닉네임2", "댓글 내용2"]
-    ]);
-    // 해시태그 목록
-    const [hashtags, setHashtags] = useState(["#태그1", "#태그2"]);
-    // 사용자로 검색
-    const [userPosts, setUserPosts] = useState(["글1", "글2"]);
-    // 해시태그로 검색
-    const [searchResults, setSearchResults] = useState([["글1", "글2"]]);
-    // 좋아요 (true: 좋아요O, false: 좋아요X)
-    const [liked, setLiked] = useState(false);
-    // 북마크 (true: 북마크O, false: 북마크X)
-    const [bookmarked, setBookmarked] = useState(false);
-    // 내 북마크 목록
-    const [bookmarkedPosts, setBookmarkedPosts] = useState([["글1", "글2"]]);
+    const [posts, setPosts] = useState([]);
+    const [nickname, setNickname] = useState('사용자닉네임');
 
-  return (
-      <View>
-          <Text>
-                {nickname}<br />
-                {contents}<br/>
-                {reply[0][0]}: {reply[0][1]}<br/>
-                {reply[1][0]}: {reply[1][1]}
-          </Text>
+    // 전체 게시글 조회
+    const fetchPosts = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/posts');
+            const data = await response.json();
+            setPosts(data);
+        } catch (error) {
+            console.error('게시글 조회 에러:', error);
+        }
+    };
 
-      </View>
-  );
+    // 게시글 작성
+    const createPost = async (content, hashtags, image) => {
+        const formData = new FormData();
+        formData.append('postDto', JSON.stringify({ content, hashtags }));
+        formData.append('image', image);
+
+        try {
+            await fetch(`http://localhost:8080/posts?nickname=${nickname}`, {
+                method: 'POST',
+                body: formData,
+            });
+            fetchPosts();
+        } catch (error) {
+            console.error('게시글 작성 에러:', error);
+        }
+    };
+
+    // 게시글 수정
+    const updatePost = async (postId, content, hashtags) => {
+        try {
+            await fetch(`http://localhost:8080/posts/${postId}?nickname=${nickname}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, hashtags }),
+            });
+            fetchPosts();
+        } catch (error) {
+            console.error('Error updating post:', error);
+        }
+    };
+
+    // 게시글 삭제
+    const deletePost = async (postId) => {
+        try {
+            await fetch(`http://localhost:8080/posts/${postId}?nickname=${nickname}`, {
+                method: 'DELETE',
+            });
+            setPosts(posts.filter((post) => post.id !== postId));
+        } catch (error) {
+            console.error('게시글 삭제 에러:', error);
+        }
+    };
+
+    // 해시태그 검색
+    const searchByHashtag = async (tag) => {
+        try {
+            const response = await fetch(`http://localhost:8080/posts/search?tag=${encodeURIComponent(tag)}`);
+            const data = await response.json();
+            setPosts(data);
+        } catch (error) {
+            console.error('해시태그 검색 에러:', error);
+        }
+    };
+
+    // 작성자로 검색
+    const searchByUser = async (searchNickname) => {
+        try {
+            const response = await fetch(`http://localhost:8080/posts/user?nickname=${searchNickname}`);
+            const data = await response.json();
+            setPosts(data);
+        } catch (error) {
+            console.error('작성자로 검색 에러:', error);
+        }
+    };
+
+    // 좋아요 기능
+    const likePost = async (postId) => {
+        try {
+            await fetch(`http://localhost:8080/posts/${postId}/like?nickname=${nickname}`, {
+                method: 'POST',
+            });
+            fetchPosts();
+        } catch (error) {
+            console.error('좋아요 에러:', error);
+        }
+    };
+
+    // 댓글 작성
+    const addComment = async (postId, comment) => {
+        try {
+            await fetch(`http://localhost:8080/posts/${postId}/comment?nickname=${nickname}&content=${comment}`, {
+                method: 'POST',
+            });
+            fetchPosts();
+        } catch (error) {
+            console.error('댓글 작성 에러:', error);
+        }
+    };
+
+    // 게시글 스크랩
+    const bookmarkPost = async (postId) => {
+        try {
+            await fetch(`http://localhost:8080/posts/${postId}/bookmark?nickname=${nickname}`, {
+                method: 'POST',
+            });
+            fetchPosts();
+        } catch (error) {
+            console.error('북마크 에러:', error);
+        }
+    };
+
+    // 스크랩 목록 조회
+    const fetchBookmarks = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/posts/bookmarks?nickname=${nickname}`);
+            const data = await response.json();
+            setPosts(data);
+        } catch (error) {
+            console.error('북마크 목록 에러:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    return null;
 }
+
