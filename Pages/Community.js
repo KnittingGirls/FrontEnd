@@ -4,6 +4,8 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 
+const baseUrl = 'http://localhost:8080/posts';
+
 export default function Community() {
     const [posts, setPosts] = useState([]);
     const [newPostContent, setNewPostContent] = useState("");
@@ -15,8 +17,6 @@ export default function Community() {
     const [editHashtags, setEditHashtags] = useState("");
 
     const nickname = '서자영';
-
-    const baseUrl = 'http://localhost:8080/posts';
 
     // 전체 게시글 조회
     const fetchPosts = async () => {
