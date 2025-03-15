@@ -10,12 +10,18 @@ export default function Community() {
     const [newHashtags, setNewHashtags] = useState("");
     const [searchTag, setSearchTag] = useState("");
     const [searchNickname, setSearchNickname] = useState("");
+    const [editingPost, setEditingPost] = useState(null);
+    const [editContent, setEditContent] = useState("");
+    const [editHashtags, setEditHashtags] = useState("");
+
     const nickname = '서자영';
+
+    const baseUrl = 'http://localhost:8080/posts';
 
     // 전체 게시글 조회
     const fetchPosts = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/posts`);
+            const response = await fetch(`${baseUrl}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -26,12 +32,11 @@ export default function Community() {
     // 게시글 작성
     const createPost = async () => {
         const hashtagsArray = newHashtags.split(',').map(tag => tag.trim());
-
         const formData = new FormData();
         formData.append('postDto', JSON.stringify({ content: newPostContent, hashtags: hashtagsArray }));
 
         try {
-            await fetch(`http://localhost:8080/posts?nickname=${nickname}`, {
+            await fetch(`${baseUrl}?nickname=${nickname}`, {
                 method: 'POST',
                 body: formData,
             });
@@ -46,11 +51,15 @@ export default function Community() {
     // 게시글 수정
     const updatePost = async (postId) => {
         try {
-            await fetch(`http://localhost:8080/posts/${postId}?nickname=${nickname}`, {
+            await fetch(`${baseUrl}/${postId}?nickname=${nickname}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: "수정된 내용", hashtags: ["#수정됨"] }),
+                body: JSON.stringify({
+                    content: editContent,
+                    hashtags: editHashtags.split(',').map(tag => tag.trim())
+                })
             });
+            setEditingPost(null);
             fetchPosts();
         } catch (error) {
             console.error('게시글 수정 에러:', error);
@@ -60,7 +69,7 @@ export default function Community() {
     // 게시글 삭제
     const deletePost = async (postId) => {
         try {
-            await fetch(`http://localhost:8080/posts/${postId}?nickname=${nickname}`, {
+            await fetch(`${baseUrl}/${postId}?nickname=${nickname}`, {
                 method: 'DELETE',
             });
             fetchPosts();
@@ -72,7 +81,7 @@ export default function Community() {
     // 해시태그 검색
     const searchByHashtag = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/posts/search?tag=${encodeURIComponent(searchTag)}`);
+            const response = await fetch(`${baseUrl}/search?tag=${encodeURIComponent(searchTag)}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -83,7 +92,7 @@ export default function Community() {
     // 작성자로 검색
     const searchByUser = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/posts/user?nickname=${searchNickname}`);
+            const response = await fetch(`${baseUrl}/user?nickname=${searchNickname}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -94,9 +103,7 @@ export default function Community() {
     // 게시글 좋아요
     const likePost = async (postId) => {
         try {
-            await fetch(`http://localhost:8080/posts/${postId}/like?nickname=${nickname}`, {
-                method: 'POST',
-            });
+            await fetch(`${baseUrl}/${postId}/like?nickname=${nickname}`, { method: 'POST' });
             fetchPosts();
         } catch (error) {
             console.error('좋아요 에러:', error);
@@ -106,9 +113,7 @@ export default function Community() {
     // 게시글 북마크
     const bookmarkPost = async (postId) => {
         try {
-            await fetch(`http://localhost:8080/posts/${postId}/bookmark?nickname=${nickname}`, {
-                method: 'POST',
-            });
+            await fetch(`${baseUrl}/${postId}/bookmark?nickname=${nickname}`, { method: 'POST' });
             fetchPosts();
         } catch (error) {
             console.error('북마크 에러:', error);
@@ -118,7 +123,7 @@ export default function Community() {
     // 북마크 목록 조회
     const fetchBookmarks = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/posts/bookmarks?nickname=${nickname}`);
+            const response = await fetch(`${baseUrl}/bookmarks?nickname=${nickname}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -143,7 +148,7 @@ export default function Community() {
             />
             <TextInput
                 style={styles.input}
-                placeholder="해시태그 (쉼표로 구분 ex. #태그1, #태그2)"
+                placeholder="해시태그 (ex. #태그1, #태그2)"
                 value={newHashtags}
                 onChangeText={setNewHashtags}
             />
@@ -179,22 +184,68 @@ export default function Community() {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                     <View style={styles.postContainer}>
-                        <Text style={styles.postContent}>{item.content}</Text>
-                        <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
-                        <TouchableOpacity style={styles.button} onPress={() => likePost(item.id)}>
-                            <Text style={styles.buttonText}>좋아요</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={() => bookmarkPost(item.id)}>
-                            <Text style={styles.buttonText}>북마크</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={() => deletePost(item.id)}>
-                            <Text style={styles.buttonText}>삭제</Text>
-                        </TouchableOpacity>
+                        {editingPost === item.id ? (
+                            <>
+                                <TextInput
+                                    style={styles.input}
+                                    value={editContent}
+                                    onChangeText={setEditContent}
+                                    placeholder="새 내용"
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    value={editHashtags}
+                                    onChangeText={setEditHashtags}
+                                    placeholder="새 해시태그"
+                                />
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => updatePost(item.id)}
+                                >
+                                    <Text style={styles.buttonText}>수정 완료</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.button} onPress={() => setEditingPost(null)}>
+                                    <Text style={styles.buttonText}>취소</Text>
+                                </TouchableOpacity>
+                            </>
+                        ) : (
+                            <>
+                                <Text style={styles.postContent}>{item.content}</Text>
+                                <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
+
+                                {/* 좋아요 */}
+                                <TouchableOpacity style={styles.button} onPress={() => likePost(item.id)}>
+                                    <Text style={styles.buttonText}>좋아요</Text>
+                                </TouchableOpacity>
+
+                                {/* 북마크 */}
+                                <TouchableOpacity style={styles.button} onPress={() => bookmarkPost(item.id)}>
+                                    <Text style={styles.buttonText}>북마크</Text>
+                                </TouchableOpacity>
+
+                                {/* 수정 */}
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => {
+                                        setEditingPost(item.id);
+                                        setEditContent(item.content);
+                                        setEditHashtags(item.hashtags.join(', '));
+                                    }}
+                                >
+                                    <Text style={styles.buttonText}>수정</Text>
+                                </TouchableOpacity>
+
+                                {/* 삭제 버튼 */}
+                                <TouchableOpacity style={[styles.button, { backgroundColor: 'red' }]} onPress={() => deletePost(item.id)}>
+                                    <Text style={styles.buttonText}>삭제</Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
                     </View>
                 )}
             />
 
-            {/* 북마크 목록 조회 */}
+            {/* 북마크 목록 */}
             <TouchableOpacity style={styles.button} onPress={fetchBookmarks}>
                 <Text style={styles.buttonText}>북마크 목록 보기</Text>
             </TouchableOpacity>
@@ -212,3 +263,4 @@ const styles = StyleSheet.create({
     postContent: { fontSize: 18 },
     hashtags: { color: 'gray' }
 });
+
