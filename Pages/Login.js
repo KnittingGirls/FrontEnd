@@ -72,11 +72,11 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
     },
     image: {
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
         flexDirection: 'column'
     },
     btnContainer: {

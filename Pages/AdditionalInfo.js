@@ -8,7 +8,7 @@ export default function AdditionalInfo({ navigation }) {
     const sweetHouse = require("../assets/background/sweetHouse.png");
 
     return (
-        <View>
+        <View style={styles.container}>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
                 <View style={styles.Info}>
                     <Text>
@@ -28,13 +28,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
         alignItems: 'center',
         justifyContent: 'center',
     },
     image: {
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
         // justifyContent: 'center',
         alignItems: 'center',
     },

@@ -53,14 +53,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
         alignItems: 'center',
         justifyContent: 'center',
     },
     image: {
         flex: 1,
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
         justifyContent: 'center',
     },
     img: {

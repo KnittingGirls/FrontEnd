@@ -21,13 +21,13 @@ export default function NewPattern({ navigation }) {
 
 const styles = StyleSheet.create({
     container: {
-        // flex: 1,
+        flex: 13,
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
     },
     image: {
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
         // justifyContent: 'center',
         flexDirection: 'column'
     },
