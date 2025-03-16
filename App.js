@@ -13,6 +13,10 @@ import { createDrawerNavigator, DrawerToggleButton, DrawerActions } from '@react
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import Community from './Pages/Community';
 import { StyleSheet, View, Dimensions, TouchableOpacity,Image } from 'react-native';
+import AllPosts from './Pages/Community/AllPosts';
+import EachPost from './Pages/Community/EachPost';
+import MyPage from './Pages/Community/MyPage';
+import NewPost from './Pages/Community/NewPost';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -59,7 +63,9 @@ const DrawerNavigator = () => (<Drawer.Navigator
   {/* <Drawer.Screen name="UploadImg" component={UploadImg} options={{ ...options, drawerLabel: "이미지 업로드" }} /> */}
   {/* <Drawer.Screen name="ShowPattern" component={ShowPattern} options={{ ...options, drawerLabel: "패턴 확인" }} /> */}
   {/* <Drawer.Screen name="AdditionalInfo" component={AdditionalInfo} options={{ ...options, drawerLabel: "추가 정보 입력" }} /> */}
-  <Drawer.Screen name="Community" component={Community} options={{ ...options, drawerLabel: "커뮤니티- 게시물 조회" }} />
+  <Drawer.Screen name="Community" component={Community} options={{ ...options, drawerLabel: "커뮤니티" }} />
+  <Drawer.Screen name="AllPosts" component={AllPosts} options={{ ...options, drawerLabel: "커뮤니티- 게시물 조회" }} />
+  <Drawer.Screen name="MyPage" component={MyPage} options={{ ...options, drawerLabel: "마이페이지" }} />
 </Drawer.Navigator>
 )
 
@@ -75,6 +81,8 @@ const AppNavigator = () => (
     <Stack.Screen name="SelectActivity" component={SelectActivity} options={{ title: "" }} />
     <Stack.Screen name="ShowPattern" component={ShowPattern} options={{ title: "" }} />
     <Stack.Screen name="AdditionalInfo" component={AdditionalInfo} options={{ title: "" }} />
+    <Stack.Screen name="EachPost" component={EachPost} options={{ title: "" }} />
+    <Stack.Screen name="NewPost" component={NewPost} options={{ title: "" }} />
   </Stack.Navigator>
 );
 
