@@ -69,6 +69,7 @@ export default function UploadImg({ navigation }) {
 
     return (
         <View>
+        <View style={ styles.container}>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
                 <View style={{ flex: 1 }}></View>
                 <View style={styles.upload}>
@@ -88,9 +89,14 @@ export default function UploadImg({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex:1,
+        width: SCREEN_WIDTH,
+        height: "100%",
+    },
     image: {
         width: SCREEN_WIDTH,
-        height: SCREEN_HEIGHT,
+        height: "100%",
         alignItems: "center",
     },
     upload: {
