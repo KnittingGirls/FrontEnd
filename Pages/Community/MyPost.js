@@ -3,10 +3,11 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
 import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
 const baseUrl = 'http://localhost:8080/posts';
 
-export default function MyPage({ navigation}) {
+export default function MyPost({ navigation}) {
     const [myposts, setMyPosts] = useState([]);
     const [posts, setPosts] = useState([]);
     const nickname = '서자영';
@@ -39,36 +40,74 @@ export default function MyPage({ navigation}) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>내가 쓴 게시물</Text>
+            {/* <Text style={styles.header}>내가 쓴 게시물</Text> */}
 
             {/* 게시글 목록 */}
             <FlatList
                 data={myposts}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
+               renderItem={({ item }) => (
                     <TouchableOpacity style={styles.postContainer} onPress={() => { navigation.navigate("EachPost", {postId:item.id}) }}>
-                        <Text style={styles.postContent}>{item.content}</Text>
-                        <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
+                        <View style={{flex:7,justifyContent:'space-between'}}>
+                            <Text style={styles.postContent}>{item.content}</Text>
+                            <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
+                        </View>
+                        <FontAwesome name={'image'} size={40} color={"black"} style={{ flex: 1, }} />
                     </TouchableOpacity>
                 )}
             />
 
             {/* 북마크 목록 */}
-            <TouchableOpacity style={styles.button} onPress={fetchBookmarks}>
+            {/* <TouchableOpacity style={styles.button} onPress={fetchBookmarks}>
                 <Text style={styles.buttonText}>북마크 목록 보기</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20 },
+    container: {
+        flex: 1,
+        padding: 10,
+        backgroundColor: "white"
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        padding: 10,
+    },
     header: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-    input: { borderWidth: 1, padding: 10, marginVertical: 5 },
-    button: { backgroundColor: 'blue', padding: 10, marginVertical: 5, alignItems: 'center' },
-    buttonText: { color: 'white', fontWeight: 'bold' },
-    postContainer: { borderWidth: 1, padding: 10, marginVertical: 5 },
-    postContent: { fontSize: 18 },
-    hashtags: { color: 'gray' }
+    input: {
+        flex: 8, borderWidth: 0, padding: 10, marginVertical: 5,
+        backgroundColor: "#E2E2E2",
+        borderRadius: 9,
+    },
+    button: {
+        backgroundColor: "rgb(241, 160, 91)",
+        // backgroundColor:"orange",
+        padding: 10,
+        marginVertical: 5,
+        alignItems: 'center',
+        borderRadius: 5,
+        marginLeft: 10,
+        minWidth: 45,
+    },
+    buttonText: { color: 'black', fontWeight: 'bold' },
+    postContainer: {
+        borderBottomWidth: 1, marginVertical: 0, marginHorizontal: 10,
+        padding: 10,
+        backgroundColor: "white",
+        borderColor: "gray",
+        minHeight: 100,
+        flexShrink: 1,
+        justifyContent: "space-between",
+        flexDirection: "row"
+    },
+    postContent: { fontSize: 15 },
+    hashtags: { color: 'gray' },
+    btnContainer: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        padding: 10,
+    }
 });
 

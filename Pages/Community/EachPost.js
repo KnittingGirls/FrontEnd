@@ -3,7 +3,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const baseUrl = 'http://localhost:8080/posts';
 
 export default function EachPost({route}) {
@@ -11,8 +11,8 @@ export default function EachPost({route}) {
     const [editingPost, setEditingPost] = useState(null);
     const [editContent, setEditContent] = useState("");
     const [editHashtags, setEditHashtags] = useState("");
-    const [replies, setReplies] = useState("");
-
+    const [replies, setReplies] = useState(["댓글내용",'댓글내용2']);
+    const [newReplyContent, setNewReplyContent] = useState("");
     const nickname = '서자영';
     const postId = route.params.postId;
 
@@ -95,11 +95,9 @@ export default function EachPost({route}) {
 
     return (
         <View style={styles.container}>
-
-            {/* 게시글 목록 */}
-            <View style={styles.postContainer}>
+            <View >
                 {editingPost === posts.id ? (
-                    <>
+                    <View style={styles.postContainer}>
                         <TextInput
                             style={styles.input}
                             value={editContent}
@@ -121,11 +119,18 @@ export default function EachPost({route}) {
                         <TouchableOpacity style={styles.button} onPress={() => setEditingPost(null)}>
                             <Text style={styles.buttonText}>취소</Text>
                         </TouchableOpacity>
-                    </>
-                ) : (
-                    <>
-                        <Text style={styles.postContent}>{posts.content}</Text>
-                        <Text style={styles.hashtags}>{posts.hashtags?.join(' ')}</Text>
+                    </View>
+                ) : (<>
+                        <View style={styles.postContainer}>
+                            <Text style={styles.postContent}>
+                                {/* {posts.content} */}
+                                글 내용
+                            </Text>
+                            <Text style={styles.hashtags}>
+                                #태그예시1 #태그예시2
+                                {/* {posts.hashtags?.join(' ')} */}
+                            </Text>
+                        </View>  
                         <View style={styles.btnContainer}>
                             {/* 좋아요 */}
                             <TouchableOpacity style={styles.button} onPress={() => likePost(posts.id)}>
@@ -134,7 +139,7 @@ export default function EachPost({route}) {
 
                             {/* 북마크 */}
                             <TouchableOpacity style={styles.button} onPress={() => bookmarkPost(posts.id)}>
-                                <FontAwesome6 name={'bookmark'} size={25} color={"black"} />    
+                                <FontAwesome name={'bookmark'} size={25} color={"black"} />    
                             </TouchableOpacity>
 
                             {/* 수정 */}
@@ -150,12 +155,41 @@ export default function EachPost({route}) {
                             </TouchableOpacity>
 
                             {/* 삭제 버튼 */}
-                            <TouchableOpacity style={[styles.button]} onPress={() => deletePost(posts.id)}>
+                            <TouchableOpacity style={styles.button} onPress={() => deletePost(posts.id)}>
                                 <AntDesign name={'delete'} size={25} color={"black"} />
                             </TouchableOpacity>
                         </View>
-                    </>
-                )}
+                        <View style={styles.replyContainer}>
+                            <FlatList
+                                data={replies}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (   
+                                    <View style={styles.reply}>
+                                        <Text style={styles.postContent}>{item}</Text>
+                                        <TouchableOpacity>
+                                            {/* 여기에 onPRess 댓글 삭제 적용하기& 자기가 작성한 댓글일 때만 삭제 버튼 */}
+                                            <AntDesign name={'delete'} size={18} color={"black"} />
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                                style={{marginVertical:10}}
+                            />
+                            <View style={styles.newreply}>
+                                <TextInput
+                                    style={{ ...styles.input,  height:60 , flex:8}}
+                                    placeholder="내용"
+                                    value={newReplyContent}
+                                    onChangeText={setNewReplyContent}
+                                    multiline={true}
+                                />
+                                <TouchableOpacity style={{...styles.replyBtn,flex:1}}>
+                                    {/* onPress 댓글 업로드 */}
+                                    <FontAwesome name={'send'} size={25} color={"black"} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        
+                    </>)}
             </View>
           
         </View>
@@ -163,14 +197,49 @@ export default function EachPost({route}) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20 },
+    container: { flex: 1, padding: 20 ,backgroundColor:"white",width:"100%",height:"100%"},
     header: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
     input: { borderWidth: 1, padding: 10, marginVertical: 5 },
     btnContainer:{flexDirection:"row"},
     button: { backgroundColor: 'transparent', padding: 10, marginVertical: 5, alignItems: 'center',flex:1 },
     buttonText: { color: 'white', fontWeight: 'bold' },
-    postContainer: { borderWidth: 1, padding: 10, marginVertical: 5 },
+    postContainer: {
+        borderWidth: 1, padding: 10, marginVertical: 5,
+        minHeight:200,
+        justifyContent:"space-between"
+    },
     postContent: { fontSize: 18 },
-    hashtags: { color: 'gray' }
+    hashtags: { color: 'gray' },
+    reply: {
+        borderBottomWidth: 1, marginVertical: 0, marginHorizontal: 10,
+        padding: 10,
+        backgroundColor: "white",
+        borderColor: "gray",
+        minHeight: 50,
+        flexShrink: 1,
+        justifyContent: "space-between",
+        flexDirection: "row"
+    },
+    newreply: {
+        flexDirection: "row",
+        alignItems: "center",
+        // position: 'absolute',
+        // bottom: 0,
+        // left:0,
+    },
+    replyBtn: {
+        backgroundColor: "rgb(241, 160, 91)",
+        // backgroundColor:"orange",
+        padding: 10,
+        marginVertical: 5,
+        alignItems: 'center',
+        borderRadius: 5,
+        marginLeft: 10,
+        minWidth: "fit-content",
+        maxHeight:"fit-content"
+    },
+    replyContainer: {
+        alignItems:"space-between"
+    }
 });
 

@@ -15,8 +15,10 @@ import Community from './Pages/Community';
 import { StyleSheet, View, Dimensions, TouchableOpacity,Image } from 'react-native';
 import AllPosts from './Pages/Community/AllPosts';
 import EachPost from './Pages/Community/EachPost';
-import MyPage from './Pages/Community/MyPage';
+// import MyPage from './Pages/Community/MyPost';
 import NewPost from './Pages/Community/NewPost';
+import MyPost from './Pages/Community/MyPost';
+import ScrapList from './Pages/Community/ScrapList';
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -24,11 +26,15 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 const options = {
+  
   drawerActiveBackgroundColor: "orange",
   overlayColor: "white",
   drawerInactiveBackgroundColor: "white",
   drawerActiveTintColor: "black",
-  headerTitle: ""
+  headerTitle: "",
+  headerStyle: {
+    borderRadius:14,
+  }
 }
 
 const MenuButton = ({ navigation }) => {
@@ -65,7 +71,8 @@ const DrawerNavigator = () => (<Drawer.Navigator
   {/* <Drawer.Screen name="AdditionalInfo" component={AdditionalInfo} options={{ ...options, drawerLabel: "추가 정보 입력" }} /> */}
   <Drawer.Screen name="Community" component={Community} options={{ ...options, drawerLabel: "커뮤니티" }} />
   <Drawer.Screen name="AllPosts" component={AllPosts} options={{ ...options, drawerLabel: "커뮤니티- 게시물 조회" }} />
-  <Drawer.Screen name="MyPage" component={MyPage} options={{ ...options, drawerLabel: "마이페이지" }} />
+  <Drawer.Screen name="MyPost" component={MyPost} options={{ ...options, drawerLabel: "내가 쓴 글" }} />
+  <Drawer.Screen name="ScrapList" component={ScrapList} options={{ ...options, drawerLabel: "스크랩한 글" }} />
 </Drawer.Navigator>
 )
 

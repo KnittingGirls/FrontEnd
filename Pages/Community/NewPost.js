@@ -1,8 +1,9 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet ,Image} from 'react-native';
+import * as ImagePicker from "expo-image-picker";
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
 const baseUrl = 'http://localhost:8080/posts';
 
@@ -10,9 +11,24 @@ export default function NewPost({ navigation }) {
     const [posts, setPosts] = useState([]);
     const [newPostContent, setNewPostContent] = useState("");
     const [newHashtags, setNewHashtags] = useState("");
-
-    const nickname = '서자영';
-
+    const [selectedImage, setSelectedImage] = useState(null);
+    const nickname = '서자영'; //   
+    
+    // 이미지 선택 함수
+    const pickImage = async () => {
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaType: ['photo'],
+            allowsEditing: true,
+            quality: 1,
+        });
+        // console.log(result);
+        if (!result.canceled && result.assets[0].uri) {
+            setSelectedImage(result.assets[0]); // 선택한 이미지의 정보 저장
+        } else {
+            console.log("이미지를 선택하지 않았습니다.");
+        }
+    };
+    
     // 게시글 작성
     const createPost = async () => {
         const hashtagsArray = newHashtags.split(',').map(tag => tag.trim());
@@ -34,21 +50,32 @@ export default function NewPost({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>게시물 작성</Text>
+            {/* <Text style={styles.header}>게시물 작성</Text> */}
 
             {/* 게시글 작성 */}
             <TextInput
-                style={styles.input}
+                style={{ ...styles.input,  minHeight: 180,maxHeight:200}}
                 placeholder="내용"
                 value={newPostContent}
                 onChangeText={setNewPostContent}
+                multiline={true}
             />
             <TextInput
-                style={styles.input}
+                style={{ ...styles.input, maxHeight: 60 }}
                 placeholder="해시태그 (ex. #태그1, #태그2)"
                 value={newHashtags}
                 onChangeText={setNewHashtags}
+                multiline={true}
             />
+            <View style={styles.imageUpload}>
+                {selectedImage && (
+                    <Image source={{ uri: selectedImage.uri }} style={styles.img} />
+                )}
+                
+            </View>
+            <TouchableOpacity onPress={pickImage} style={styles.button}>
+                <Text style={styles.buttonText}>이미지 업로드</Text>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={createPost}>
                 <Text style={styles.buttonText}>게시글 작성</Text>
             </TouchableOpacity>
@@ -57,13 +84,25 @@ export default function NewPost({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20 },
+    container: { flex: 1, padding: 20,backgroundColor:"white" },
     header: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-    input: { borderWidth: 1, padding: 10, marginVertical: 5 },
-    button: { backgroundColor: 'blue', padding: 10, marginVertical: 5, alignItems: 'center' },
-    buttonText: { color: 'white', fontWeight: 'bold' },
+    input: { borderWidth: 1, padding: 10, marginVertical: 5 ,flexShrink:2,flex:4},
+    button: { backgroundColor: "rgb(241, 160, 91)", padding: 10, marginVertical: 5, alignItems: 'center' },
+    buttonText: { color: 'black', fontWeight: 'bold' },
     postContainer: { borderWidth: 1, padding: 10, marginVertical: 5 },
     postContent: { fontSize: 18 },
-    hashtags: { color: 'gray' }
+    hashtags: { color: 'gray' },
+    imageUpload: { flex: 1 },
+    img: {
+        width: 120,
+        height: 120,
+        marginVertical: 10,
+    },
+    pickImage: {
+        backgroundColor: "gray",
+        alignItems: "center",
+        justifyContent: "center",
+        justifyContent:"flex-end"
+    }
 });
 
