@@ -16,6 +16,7 @@ export default function Community() {
     const [editContent, setEditContent] = useState("");
     const [editHashtags, setEditHashtags] = useState("");
     const [commentText, setCommentText] = useState({});
+    const [viewMode, setViewMode] = useState("all");
 
     const nickname = '서자영';
 
@@ -26,6 +27,7 @@ export default function Community() {
             if (!response.ok) throw new Error(`HTTP error status: ${response.status}`);
             const data = await response.json();
             setPosts(data);
+            setViewMode("all");
         } catch (error) {
             console.error('게시글 조회 에러:', error.message);
         }
@@ -37,26 +39,30 @@ export default function Community() {
             const response = await fetch(`${baseUrl}/bookmarks?nickname=${nickname}`);
             const data = await response.json();
             setPosts(data);
+            setViewMode("bookmarks");
         } catch (error) {
             console.error('북마크 조회 에러:', error);
         }
     };
 
-    // 댓글 작성
+    // 댓글
     const commentPost = async (postId) => {
         if (!commentText[postId]?.trim()) return;
         try {
-            const nicknameEncoded = encodeURIComponent(nickname);
-            const contentEncoded = encodeURIComponent(commentText[postId]);
+            const encodedContent = encodeURIComponent(commentText[postId]);
+            const encodedNickname = encodeURIComponent(nickname);
 
-            await fetch(`${baseUrl}/${postId}/comment?nickname=${nicknameEncoded}&content=${contentEncoded}`, {
+            const response = await fetch(`${baseUrl}/${postId}/comment?nickname=${encodedNickname}&content=${encodedContent}`, {
                 method: 'POST',
             });
 
-            setCommentText(prev => ({ ...prev, [postId]: "" }));
-            fetchPosts();
+            if (!response.ok) throw new Error("댓글 작성 실패");
+
+            const newComment = await response.json();
+
+            setCommentText((prev) => ({ ...prev, [postId]: "" }));
         } catch (error) {
-            console.error('댓글 작성 에러:', error);
+            console.error("댓글 작성 에러:", error);
         }
     };
 
@@ -148,7 +154,6 @@ export default function Community() {
         }
     };
 
-
     // 북마크
     const toggleBookmark = async (postId) => {
         try {
@@ -171,7 +176,6 @@ export default function Community() {
     useEffect(() => {
         fetchPosts();
     }, []);
-
 
     return (
         <View style={styles.container}>
@@ -212,6 +216,23 @@ export default function Community() {
             <TouchableOpacity style={styles.button} onPress={searchByUser}>
                 <Text style={styles.buttonText}>작성자 검색</Text>
             </TouchableOpacity>
+
+            {/* 전체 게시글 / 북마크 게시글 보기 버튼 */}
+                    <View style={styles.toggleButtons}>
+                        <TouchableOpacity
+                            style={[styles.button, viewMode === "all" && styles.activeButton]}
+                            onPress={fetchPosts}
+                        >
+                            <Text style={styles.buttonText}>전체 게시글</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[styles.button, viewMode === "bookmarks" && styles.activeButton]}
+                            onPress={fetchBookmarks}
+                        >
+                            <Text style={styles.buttonText}>북마크한 게시글</Text>
+                        </TouchableOpacity>
+                    </View>
 
             {/* 게시글 목록 */}
             <FlatList
@@ -287,6 +308,15 @@ export default function Community() {
                                     </TouchableOpacity>
                                 </View>
 
+                                {/* 댓글 목록 */}
+                                {item.comments && item.comments.length > 0 && (
+                                item.comments.map((comment) => (
+                                    <View key={comment.id} style={styles.commentContainer}>
+                                    <Text style={styles.commentAuthor}>{comment.author.nickname}</Text>
+                                    <Text style={styles.commentText}>{comment.content}</Text>
+                                    </View>
+                                    ))
+                                )}
 
                                 {/* 댓글 입력 및 작성 */}
                                 <TextInput
@@ -295,8 +325,9 @@ export default function Community() {
                                     value={commentText[item.id] || ""}
                                     onChangeText={(text) =>
                                         setCommentText((prev) => ({ ...prev, [item.id]: text }))
-                                    }
+                                        }
                                 />
+
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => commentPost(item.id)}
