@@ -18,8 +18,8 @@ export default function EachPost({route}) {
 
     const fetchPosts = async () => {
         try {
-            const data = await fetch(`${baseUrl}/${postId}`); //이 주소가 맞는지 확인 필요함
-            // const data = await response.json();
+            const response = await fetch(`${baseUrl}/${postId}`); //이 주소가 맞는지 확인 필요함
+            const data = await response.json();
             // const replyres = await fetch(`${baseUrl}/${postId}/comment`); 
             // const replydata = await replyres.json();
             setPosts(data);
@@ -123,12 +123,10 @@ export default function EachPost({route}) {
                 ) : (<>
                         <View style={styles.postContainer}>
                             <Text style={styles.postContent}>
-                                {/* {posts.content} */}
-                                글 내용
+                                {posts.content}
                             </Text>
                             <Text style={styles.hashtags}>
-                                #태그예시1 #태그예시2
-                                {/* {posts.hashtags?.join(' ')} */}
+                                {posts.hashtags?.join(' ')}
                             </Text>
                         </View>  
                         <View style={styles.btnContainer}>
