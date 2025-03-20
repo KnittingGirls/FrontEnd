@@ -12,7 +12,7 @@ export default function EachPost({route}) {
     const [editContent, setEditContent] = useState("");
     const [editHashtags, setEditHashtags] = useState("");
     const [replies, setReplies] = useState(["댓글내용",'댓글내용2']);
-    const [newReplyContent, setNewReplyContent] = useState("");
+    const [commentText, setCommentText] = useState({});
     const nickname = '서자영';
     const postId = route.params.postId;
 
@@ -88,6 +88,26 @@ export default function EachPost({route}) {
             console.error('북마크 조회 에러:', error);
         }
     };
+    // 댓글
+    const commentPost = async (postId) => {
+        if (!commentText[postId]?.trim()) return;
+        try {
+            const encodedContent = encodeURIComponent(commentText[postId]);
+            const encodedNickname = encodeURIComponent(nickname);
+
+            const response = await fetch(`${baseUrl}/${postId}/comment?nickname=${encodedNickname}&content=${encodedContent}`, {
+                method: 'POST',
+            });
+
+            if (!response.ok) throw new Error("댓글 작성 실패");
+
+            const newComment = await response.json();
+
+            setCommentText((prev) => ({ ...prev, [postId]: "" }));
+        } catch (error) {
+            console.error("댓글 작성 에러:", error);
+        }
+    };
 
     useEffect(() => {
         fetchPosts();
@@ -158,30 +178,40 @@ export default function EachPost({route}) {
                             </TouchableOpacity>
                         </View>
                         <View style={styles.replyContainer}>
-                            <FlatList
-                                data={replies}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={({ item }) => (   
+                            {/* <FlatList
+                                data={item.comments}
+                                keyExtractor={(comment, index) => index.toString()}
+                                renderItem={({ comment }) => (   
                                     <View style={styles.reply}>
-                                        <Text style={styles.postContent}>{item}</Text>
-                                        <TouchableOpacity>
+                                        <Text style={styles.postContent}>{comment.author.nickname}</Text>
+                                        <Text style={styles.postContent}>{comment.content}</Text>
+                                        <TouchableOpacity> */}
                                             {/* 여기에 onPRess 댓글 삭제 적용하기& 자기가 작성한 댓글일 때만 삭제 버튼 */}
-                                            <AntDesign name={'delete'} size={18} color={"black"} />
+                                            {/* <AntDesign name={'delete'} size={18} color={"black"} />
                                         </TouchableOpacity>
                                     </View>
                                 )}
                                 style={{marginVertical:10}}
-                            />
+                            /> */}
+                            {posts.comments && posts.comments.length > 0 && (
+                                posts.comments.map((comment) => (
+                                    <View key={comment.id} style={styles.reply}>
+                                        <Text style={styles.commentAuthor}>{comment.author.nickname}</Text>
+                                        <Text style={styles.postContent}>{comment.content}</Text>
+                                    </View>
+                                ))
+                            )}
                             <View style={styles.newreply}>
                                 <TextInput
                                     style={{ ...styles.input,  height:60 , flex:8}}
-                                    placeholder="내용"
-                                    value={newReplyContent}
-                                    onChangeText={setNewReplyContent}
+                                    placeholder="댓글 입력"
+                                    value={commentText[posts.id] || ""}
+                                    onChangeText={(text) =>
+                                        setCommentText((prev) => ({ ...prev, [posts.id]: text }))
+                                    }
                                     multiline={true}
                                 />
-                                <TouchableOpacity style={{...styles.replyBtn,flex:1}}>
-                                    {/* onPress 댓글 업로드 */}
+                                <TouchableOpacity style={{ ...styles.replyBtn, flex: 1 }} onPress={() => commentPost(posts.id)}>
                                     <FontAwesome name={'send'} size={25} color={"black"} />
                                 </TouchableOpacity>
                             </View>
