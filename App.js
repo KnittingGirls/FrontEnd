@@ -52,7 +52,7 @@ const DrawerNavigator = () => (<Drawer.Navigator
   screenOptions={{
     drawerPosition: 'right',
     backBehavior: "history",
-    headerBackButtonDisplayMode: screenLeft,
+    // headerBackButtonDisplayMode: screenLeft,
     headerLeft:
       // () => <TouchableOpacity style={{ width: 30, height: 30 }} onPress={() => { navigation(-1) }}  >
       //               <Image source={require('./assets/backBtn.svg')}/>
