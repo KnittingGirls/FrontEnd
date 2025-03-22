@@ -38,3 +38,5 @@ yarn-error.*
 #prebuild 위해
 /android
 /ios
+
+.env

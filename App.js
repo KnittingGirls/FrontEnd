@@ -66,7 +66,7 @@ const DrawerNavigator = () => (<Drawer.Navigator
   {/* <Drawer.Screen name="SelectActivity" component={SelectActivity} options={{ ...options, drawerLabel: "" }} /> */}
   <Drawer.Screen name="NewPattern" component={NewPattern} options={{ ...options, drawerLabel: "도안 생성" }} />
   {/* <Drawer.Screen name="SelectType" component={SelectType} options={{ ...options, drawerLabel: "타입 고르기" }} /> */}
-  {/* <Drawer.Screen name="UploadImg" component={UploadImg} options={{ ...options, drawerLabel: "이미지 업로드" }} /> */}
+  <Drawer.Screen name="UploadImg" component={UploadImg} options={{ ...options, drawerLabel: "이미지 업로드" }} />
   {/* <Drawer.Screen name="ShowPattern" component={ShowPattern} options={{ ...options, drawerLabel: "패턴 확인" }} /> */}
   {/* <Drawer.Screen name="AdditionalInfo" component={AdditionalInfo} options={{ ...options, drawerLabel: "추가 정보 입력" }} /> */}
   <Drawer.Screen name="Community" component={Community} options={{ ...options, drawerLabel: "커뮤니티" }} />
@@ -82,9 +82,9 @@ const AppNavigator = () => (
     //   headerRight: () => <MenuButton navigation={navigation} />, // 🚀 navigation을 직접 전달
     // })}
   >
-    <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false }} />
-    <Stack.Screen name="SelectType" component={SelectType} options={{ title: "" }} />
-    <Stack.Screen name="UploadImg" component={UploadImg} options={{ title: "" }} />
+    <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false, presentation: 'card', detachPreviousScreen: false }} />
+    <Stack.Screen name="SelectType" component={SelectType} options={{ title: "", presentation: 'card', detachPreviousScreen: false }} />
+    <Stack.Screen name="UploadImg" component={UploadImg} options={{ title: "", presentation: 'card', detachPreviousScreen: false }} />
     <Stack.Screen name="SelectActivity" component={SelectActivity} options={{ title: "" }} />
     <Stack.Screen name="ShowPattern" component={ShowPattern} options={{ title: "" }} />
     <Stack.Screen name="AdditionalInfo" component={AdditionalInfo} options={{ title: "" }} />
