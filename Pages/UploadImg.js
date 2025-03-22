@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import {
-    StyleSheet,Text,View,ImageBackground,Dimensions,TouchableOpacity,Image,} from "react-native";
+import {StyleSheet,Text,View,ImageBackground,Dimensions,TouchableOpacity,Image,} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import CustomButton from "../components/CustomButton";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+import { EXPO_PUBLIC_IPHOST } from "@env";
 
 export default function UploadImg({ navigation }) {
     const sweetHouse = require("../assets/background/sweetHouse_1.png");
@@ -13,9 +13,15 @@ export default function UploadImg({ navigation }) {
 
     // 이미지 선택 함수
     const pickImage = async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            alert('이미지를 선택하려면 권한이 필요합니다.');
+            return;
+        }
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaType: ['photo'],
             allowsEditing: true,
+            aspect:[1,1],
             quality: 1,
         });
         // console.log(result);
@@ -42,7 +48,7 @@ export default function UploadImg({ navigation }) {
             console.log("이미지 업로드 요청 시작");
 
             //서버 IP 주소로 아래 주소 변경 필요 
-            const response = await fetch("http://localhost:8080/api/images/upload", {
+            const response = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/api/images/upload`, {
 
                 method: "POST",
                 body: formData,
@@ -68,7 +74,6 @@ export default function UploadImg({ navigation }) {
     };
 
     return (
-        <View>
         <View style={ styles.container}>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
                 <View style={{ flex: 1 }}></View>

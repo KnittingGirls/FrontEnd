@@ -11,14 +11,14 @@ export default function SelectType({ navigation}) {
                 <View style={{ flex: 4 }}></View>
                 <View style={ styles.vertical}>
                     <View style={styles.horizon}>
-                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("UploadImg")} >
+                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.replace("UploadImg")} >
                             <Text style={styles.num}>01</Text>
                             <Image source={require('../assets/SelectType/free-icon-christmas-sweater-2300218.png')}
                                 style={styles.img}
                             />
                             <Text style={styles.title}>스웨터</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("UploadImg")}>
+                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.replace("UploadImg")}>
                             <Text style={styles.num}>02</Text>                           
                             <Image source={require('../assets/SelectType/free-icon-scarf-13420578.png')}
                                 style={styles.img}
@@ -27,14 +27,14 @@ export default function SelectType({ navigation}) {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.horizon}>
-                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("UploadImg")} >
+                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.replace("UploadImg")} >
                             <Text style={styles.num}>03</Text>
                             <Image source={require('../assets/SelectType/free-icon-winter-hat-616046.png')}
                                 style={styles.img}
                             />
                             <Text style={styles.title}>모자</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("UploadImg")}>
+                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.replace("UploadImg")}>
                             <Text style={styles.num}>04</Text>
                             <Image source={require('../assets/SelectType/free-icon-knitting-2975720.png')}
                                 style={styles.img}
