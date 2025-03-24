@@ -27,20 +27,21 @@ export default function ScrapList({ navigation}) {
     }, []);
 
     return (
-        <View style={styles.container}>
+        <View style={styles.postContainer}>
             <Text style={styles.header}>스크랩</Text>
-
-            {/* 북마크크 목록 */}
+            {/* 북마크 목록 */}
             <FlatList
                 data={posts}
                 keyExtractor={(item, index) => index.toString()}
-               renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.postContainer} onPress={() => { navigation.navigate("EachPost", {postId:item.id}) }}>
-                        <View style={{flex:7,justifyContent:'space-between'}}>
+                renderItem={({ item }) => (
+                   <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.navigate("EachPost", {postId:item.id}) }}>
+                         <Text style={{marginBottom:10, fontWeight:"bold",fontSize:15}}>{item.authorNickname}</Text>
+                        {/* <Image source={item.imageData} style={{ flex: 2,backgroundColor:"gray",width:"auto"}} /> */}
+                        <View style={{flex:1}}>
                             <Text style={styles.postContent}>{item.content}</Text>
                             <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
+                            <Text style={{flex:1}}>❤️ {item.likeCount}</Text>
                         </View>
-                        <FontAwesome name={'image'} size={40} color={"black"} style={{ flex: 1, }} />
                     </TouchableOpacity>
                 )}
             />
@@ -58,7 +59,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         padding: 10,
     },
-    header: { fontSize: 24, fontWeight: 'bold', margin: 10,paddingLeft:10 },
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        margin: 10,
+        paddingLeft: 10
+    },
     input: {
         flex: 8, borderWidth: 0, padding: 10, marginVertical: 5,
         backgroundColor: "#E2E2E2",
@@ -76,17 +82,32 @@ const styles = StyleSheet.create({
     },
     buttonText: { color: 'black', fontWeight: 'bold' },
     postContainer: {
-        borderBottomWidth: 1, marginVertical: 0, marginHorizontal: 10,
+        flex: 2,
+        // flexDirection: "row",
+        // flexWrap:"wrap",
+    },
+    eachPost: {
+        marginHorizontal: 10,
         padding: 10,
         backgroundColor: "white",
         borderColor: "gray",
-        minHeight: 100,
-        flexShrink: 1,
+        // minHeight: 220,
+        minHeight: 120,
         justifyContent: "space-between",
-        flexDirection: "row"
+        flex: 1,
+        marginBottom: 10,
+        borderRadius: 5,
     },
-    postContent: { fontSize: 15 },
-    hashtags: { color: 'gray' },
+    postContent: {
+        fontSize: 14,
+        flex: 1,
+        flexGrow: 1,
+        overflow: "hidden",
+    },
+    hashtags: {
+        color: '#007bff',
+        flex: 1,
+    },
     btnContainer: {
         flexDirection: "row",
         justifyContent: "flex-end",

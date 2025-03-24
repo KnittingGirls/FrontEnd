@@ -40,27 +40,23 @@ export default function MyPost({ navigation}) {
 
     return (
         <View style={styles.container}>
-            {/* <Text style={styles.header}>내가 쓴 게시물</Text> */}
-
+            <Text style={styles.header}>내가 쓴 글</Text>
             {/* 게시글 목록 */}
             <FlatList
                 data={myposts}
                 keyExtractor={(item, index) => index.toString()}
-               renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.postContainer} onPress={() => { navigation.navigate("EachPost", {postId:item.id}) }}>
-                        <View style={{flex:7,justifyContent:'space-between'}}>
+                renderItem={({ item }) => (
+                    <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.navigate("EachPost", {postId:item.id}) }}>
+                        <Text style={{marginBottom:10, fontWeight:"bold",fontSize:15}}>{item.authorNickname}</Text>
+                        {/* <Image source={item.imageData} style={{ flex: 2,backgroundColor:"gray",width:"auto"}} /> */}
+                        <View style={{flex:1}}>
                             <Text style={styles.postContent}>{item.content}</Text>
                             <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
+                            <Text style={{flex:1}}>❤️ {item.likeCount}</Text>
                         </View>
-                        <FontAwesome name={'image'} size={40} color={"black"} style={{ flex: 1, }} />
-                    </TouchableOpacity>
+                </TouchableOpacity>
                 )}
             />
-
-            {/* 북마크 목록 */}
-            {/* <TouchableOpacity style={styles.button} onPress={fetchBookmarks}>
-                <Text style={styles.buttonText}>북마크 목록 보기</Text>
-            </TouchableOpacity> */}
         </View>
     );
 }
@@ -69,13 +65,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
-        backgroundColor: "white"
+        backgroundColor: "f5f5f5"
     },
     searchContainer: {
         flexDirection: 'row',
         padding: 10,
     },
-    header: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        margin: 10,
+        paddingLeft: 10
+    },
     input: {
         flex: 8, borderWidth: 0, padding: 10, marginVertical: 5,
         backgroundColor: "#E2E2E2",
@@ -83,7 +84,6 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: "rgb(241, 160, 91)",
-        // backgroundColor:"orange",
         padding: 10,
         marginVertical: 5,
         alignItems: 'center',
@@ -93,17 +93,29 @@ const styles = StyleSheet.create({
     },
     buttonText: { color: 'black', fontWeight: 'bold' },
     postContainer: {
-        borderBottomWidth: 1, marginVertical: 0, marginHorizontal: 10,
+        flex: 2,
+    },
+    eachPost: {
+        marginHorizontal: 10,
         padding: 10,
         backgroundColor: "white",
         borderColor: "gray",
-        minHeight: 100,
-        flexShrink: 1,
+        minHeight: 120,
         justifyContent: "space-between",
-        flexDirection: "row"
+        flex: 1,
+        marginBottom: 10,
+        borderRadius: 5,
     },
-    postContent: { fontSize: 15 },
-    hashtags: { color: 'gray' },
+    postContent: {
+        fontSize: 14,
+        flex: 1,
+        flexGrow: 1,
+        overflow: "hidden",
+    },
+    hashtags: {
+        color: '#007bff',
+        flex: 1,
+    },
     btnContainer: {
         flexDirection: "row",
         justifyContent: "flex-end",
