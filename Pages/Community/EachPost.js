@@ -15,7 +15,7 @@ export default function EachPost({route}) {
     const [commentText, setCommentText] = useState({});
     const nickname = '서자영';
     const postId = route.params.postId;
-
+    const IconSize = 20;
     const fetchPosts = async () => {
         try {
             const response = await fetch(`${baseUrl}/${postId}`); //이 주소가 맞는지 확인 필요함
@@ -115,159 +115,178 @@ export default function EachPost({route}) {
 
     return (
         <View style={styles.container}>
-            <View >
-                {editingPost === posts.id ? (
+            {editingPost === posts.id ? (
+                <View style={styles.postContainer}>
+                    <TextInput
+                        style={styles.input}
+                        value={editContent}
+                        onChangeText={setEditContent}
+                        placeholder="새 내용"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        value={editHashtags}
+                        onChangeText={setEditHashtags}
+                        placeholder="새 해시태그"
+                    />
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => updatePost(postId)}
+                    >
+                        <Text style={styles.buttonText}>수정 완료</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => setEditingPost(null)}>
+                        <Text style={styles.buttonText}>취소</Text>
+                    </TouchableOpacity>
+                </View>
+            ) : (<>
                     <View style={styles.postContainer}>
-                        <TextInput
-                            style={styles.input}
-                            value={editContent}
-                            onChangeText={setEditContent}
-                            placeholder="새 내용"
-                        />
-                        <TextInput
-                            style={styles.input}
-                            value={editHashtags}
-                            onChangeText={setEditHashtags}
-                            placeholder="새 해시태그"
-                        />
+                        <Text style={{ marginBottom: 4, fontWeight: "bold",fontSize:15,flex:1 }}>{posts.authorNickname}</Text>
+                        <Text style={styles.postContent}>
+                            {posts.content}
+                        </Text>
+                        <Text style={styles.hashtags}>
+                            {posts.hashtags?.join(' ')}
+                        </Text>
+                    </View>  
+                    <View style={styles.btnContainer}>
+                        {/* 좋아요 */}
+                        <TouchableOpacity style={styles.button} onPress={() => likePost(posts.id)}>
+                            <AntDesign name={'hearto'} size={IconSize} color={"red"} />
+                            {/* 만일 눌렀다면 아래로 기본은 빈 하트로 */}
+                            {/* <AntDesign name={'heart'} size={25} color={"red"} /> */}
+                        </TouchableOpacity>
+
+                        {/* 북마크 */}
+                        <TouchableOpacity style={styles.button} onPress={() => bookmarkPost(posts.id)}>
+                            <FontAwesome name={'bookmark'} size={IconSize} color={"black"} />    
+                        </TouchableOpacity>
+
+                        {/* 수정 */}
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => updatePost(postId)}
+                            onPress={() => {
+                                setEditingPost(posts.id);
+                                setEditContent(posts.content);
+                                setEditHashtags(posts.hashtags.join(', '));
+                            }}
                         >
-                            <Text style={styles.buttonText}>수정 완료</Text>
+                            <AntDesign name={'edit'} size={IconSize} color={"black"} />    
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={() => setEditingPost(null)}>
-                            <Text style={styles.buttonText}>취소</Text>
+
+                        {/* 삭제 버튼 */}
+                        <TouchableOpacity style={styles.button} onPress={() => deletePost(posts.id)}>
+                            <AntDesign name={'delete'} size={IconSize} color={"black"} />
                         </TouchableOpacity>
                     </View>
-                ) : (<>
-                        <View style={styles.postContainer}>
-                            <Text style={styles.postContent}>
-                                {posts.content}
-                            </Text>
-                            <Text style={styles.hashtags}>
-                                {posts.hashtags?.join(' ')}
-                            </Text>
-                        </View>  
-                        <View style={styles.btnContainer}>
-                            {/* 좋아요 */}
-                            <TouchableOpacity style={styles.button} onPress={() => likePost(posts.id)}>
-                                <AntDesign name={'like2'} size={25} color={"black"}/>
-                            </TouchableOpacity>
-
-                            {/* 북마크 */}
-                            <TouchableOpacity style={styles.button} onPress={() => bookmarkPost(posts.id)}>
-                                <FontAwesome name={'bookmark'} size={25} color={"black"} />    
-                            </TouchableOpacity>
-
-                            {/* 수정 */}
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => {
-                                    setEditingPost(posts.id);
-                                    setEditContent(posts.content);
-                                    setEditHashtags(posts.hashtags.join(', '));
-                                }}
-                            >
-                                <AntDesign name={'edit'} size={25} color={"black"} />    
-                            </TouchableOpacity>
-
-                            {/* 삭제 버튼 */}
-                            <TouchableOpacity style={styles.button} onPress={() => deletePost(posts.id)}>
-                                <AntDesign name={'delete'} size={25} color={"black"} />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.replyContainer}>
-                            {/* <FlatList
-                                data={item.comments}
-                                keyExtractor={(comment, index) => index.toString()}
-                                renderItem={({ comment }) => (   
-                                    <View style={styles.reply}>
-                                        <Text style={styles.postContent}>{comment.author.nickname}</Text>
-                                        <Text style={styles.postContent}>{comment.content}</Text>
-                                        <TouchableOpacity> */}
-                                            {/* 여기에 onPRess 댓글 삭제 적용하기& 자기가 작성한 댓글일 때만 삭제 버튼 */}
-                                            {/* <AntDesign name={'delete'} size={18} color={"black"} />
-                                        </TouchableOpacity>
-                                    </View>
-                                )}
-                                style={{marginVertical:10}}
-                            /> */}
-                            {posts.comments && posts.comments.length > 0 && (
-                                posts.comments.map((comment) => (
-                                    <View key={comment.id} style={styles.reply}>
-                                        <Text style={styles.commentAuthor}>{comment.author.nickname}</Text>
-                                        <Text style={styles.postContent}>{comment.content}</Text>
-                                    </View>
-                                ))
-                            )}
-                            <View style={styles.newreply}>
-                                <TextInput
-                                    style={{ ...styles.input,  height:60 , flex:8}}
-                                    placeholder="댓글 입력"
-                                    value={commentText[posts.id] || ""}
-                                    onChangeText={(text) =>
-                                        setCommentText((prev) => ({ ...prev, [posts.id]: text }))
-                                    }
-                                    multiline={true}
-                                />
-                                <TouchableOpacity style={{ ...styles.replyBtn, flex: 1 }} onPress={() => commentPost(posts.id)}>
-                                    <FontAwesome name={'send'} size={25} color={"black"} />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+                    <View style={styles.replyContainer}>
+                        {posts.comments && posts.comments.length > 0 && (
+                            posts.comments.map((comment) => (
+                                <View key={comment.id} style={styles.reply}>
+                                    <Text style={styles.commentAuthor}>{comment.author.nickname}</Text>
+                                    <Text style={styles.postContent}>{comment.content}</Text>
+                                </View>
+                            ))
+                        )}
                         
-                    </>)}
-            </View>
+                    </View>
+                    <View style={styles.newreply}>
+                        <TextInput
+                            style={{ ...styles.input, height: 60, flex: 8 }}
+                            placeholder="댓글 입력"
+                            value={commentText[posts.id] || ""}
+                            onChangeText={(text) =>
+                                setCommentText((prev) => ({ ...prev, [posts.id]: text }))
+                            }
+                            multiline={true}
+                        />
+                        <TouchableOpacity style={{ ...styles.replyBtn, flex: 1 }} onPress={() => commentPost(posts.id)}>
+                            <FontAwesome name={'send'} size={25} color={"black"} />
+                        </TouchableOpacity>
+                    </View>
+                </>)}
+           
           
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20 ,backgroundColor:"white",width:"100%",height:"100%"},
+    container: { flex: 1, padding: 20, backgroundColor: '#f5f5f5',width:"100%",height:"100%"},
     header: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-    input: { borderWidth: 1, padding: 10, marginVertical: 5 },
-    btnContainer:{flexDirection:"row"},
+    input: {
+        borderWidth: 1,
+        padding: 10,
+        marginVertical: 5,
+        backgroundColor:"white",
+    },
+    btnContainer: {
+        flexDirection: "row",
+        backgroundColor: "white"
+    },
     button: { backgroundColor: 'transparent', padding: 10, marginVertical: 5, alignItems: 'center',flex:1 },
     buttonText: { color: 'white', fontWeight: 'bold' },
     postContainer: {
-        borderWidth: 1, padding: 10, marginVertical: 5,
-        minHeight:200,
+        // borderWidth: 1,
+        backgroundColor:"white",
+        padding: 10,
+        marginVertical: 5,
+        minHeight: 200,
         justifyContent:"space-between"
     },
-    postContent: { fontSize: 18 },
-    hashtags: { color: 'gray' },
+    commentAuthor: {
+        fontSize: 14,
+        marginBottom:3,
+    },
+    postContent: {
+        fontSize: 13,
+        flex: 5,
+    },
+    hashtags: { color: '#007bff' },
     reply: {
-        borderBottomWidth: 1, marginVertical: 0, marginHorizontal: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f5f5f5',
+        marginVertical: 0,
+        // marginHorizontal: 10,
         padding: 10,
         backgroundColor: "white",
         borderColor: "gray",
         minHeight: 50,
-        flexShrink: 1,
+        // flex: 1,
+        flexGrow:1,
         justifyContent: "space-between",
-        flexDirection: "row"
+        // flexDirection: "row"
     },
     newreply: {
         flexDirection: "row",
         alignItems: "center",
         // position: 'absolute',
-        // bottom: 0,
-        // left:0,
+        // bottom: 4,
+        // left:"center",
+        flex: 1,
+        
     },
     replyBtn: {
         backgroundColor: "rgb(241, 160, 91)",
         // backgroundColor:"orange",
         padding: 10,
-        marginVertical: 5,
+        // marginVertical: 5,
         alignItems: 'center',
         borderRadius: 5,
-        marginLeft: 10,
-        minWidth: "fit-content",
-        maxHeight:"fit-content"
+        // marginLeft: 10,
+        width: "100%",
+        height:"100%",
+        // minWidth: "fit-content",
+        // maxHeight:"fit-content",
+        justifyContent: "center",
+        alignContent:"center"
     },
     replyContainer: {
-        alignItems:"space-between"
+        // alignItems: "space-between",
+        flex: 4,
+        marginTop: 5,
+        overflow: 'scroll',
+        // marginHorizontal:5,
     }
 });
 

@@ -2,7 +2,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet ,Image} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 const baseUrl = 'http://localhost:8080/posts';
@@ -87,20 +87,24 @@ export default function AllPosts({ navigation}) {
             
 
             {/* 게시글 목록 */}
-            <FlatList
-                data={posts}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                    <TouchableOpacity style={styles.postContainer} onPress={() => { navigation.navigate("EachPost", {postId:item.id}) }}>
-                        <View style={{flex:7,justifyContent:'space-between'}}>
-                            <Text style={styles.postContent}>{item.content}</Text>
-                            <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
-                        </View>
-                        <FontAwesome name={'image'} size={40} color={"black"} style={{ flex: 1, }} />
-                    </TouchableOpacity>
-                )}
-            />
-
+            <View style={styles.postContainer}>
+                <FlatList
+                    data={posts}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                        <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.navigate("EachPost", {postId:item.id}) }}>
+                            <Text style={{marginBottom:4, fontWeight:"bold"}}>{item.authorNickname}</Text>
+                            {/* <Image source={item.imageData} style={{ flex: 2,backgroundColor:"gray",width:"auto"}} /> */}
+                            <View style={{flex:1}}>
+                                <Text style={styles.postContent}>{item.content}</Text>
+                                <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
+                                <Text style={{flex:1}}>❤️ {item.likeCount}</Text>
+                            </View>
+                            
+                        </TouchableOpacity>
+                    )}
+                />
+            </View>
             {/* 북마크 목록 */}
             <View style={styles.btnContainer}>
                 <TouchableOpacity style={styles.button} onPress={fetchBookmarks}>
@@ -116,7 +120,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
-        backgroundColor:"white"
+        backgroundColor:"f5f5f5"
     },
     searchContainer: {
         flexDirection: 'row',
@@ -140,17 +144,32 @@ const styles = StyleSheet.create({
     },
     buttonText: { color: 'black', fontWeight: 'bold' },
     postContainer: {
-        borderBottomWidth: 1, marginVertical: 0, marginHorizontal: 10,
+        flex:2,
+        flexDirection: "row",
+        // flexWrap:"wrap",
+    },
+    eachPost: {
+        marginHorizontal: 10,
         padding:10,
         backgroundColor: "white",
         borderColor:"gray",
-        minHeight: 100,
-        flexShrink: 1,
+        // minHeight: 220,
+        minHeight:120,  
         justifyContent: "space-between",
-        flexDirection:"row"
+        flex: 1,
+        marginBottom: 10,
+        borderRadius: 5,
     },
-    postContent: { fontSize: 15 },
-    hashtags: { color: 'gray' },
+    postContent: {
+        fontSize: 15,
+        flex:1,
+        flexGrow: 1,
+        overflow:"hidden",
+    },
+    hashtags: {
+        color: '#007bff',
+        flex:1,
+    },
     btnContainer: {
         flexDirection: "row",
         justifyContent: "flex-end",
