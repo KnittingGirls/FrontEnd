@@ -93,14 +93,13 @@ export default function AllPosts({ navigation}) {
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
                         <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.navigate("EachPost", {postId:item.id}) }}>
-                            <Text style={{marginBottom:4, fontWeight:"bold"}}>{item.authorNickname}</Text>
+                            <Text style={{marginBottom:10, fontWeight:"bold",fontSize:15}}>{item.authorNickname}</Text>
                             {/* <Image source={item.imageData} style={{ flex: 2,backgroundColor:"gray",width:"auto"}} /> */}
                             <View style={{flex:1}}>
                                 <Text style={styles.postContent}>{item.content}</Text>
                                 <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
                                 <Text style={{flex:1}}>❤️ {item.likeCount}</Text>
                             </View>
-                            
                         </TouchableOpacity>
                     )}
                 />

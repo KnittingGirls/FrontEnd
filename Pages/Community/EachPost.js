@@ -11,7 +11,6 @@ export default function EachPost({route}) {
     const [editingPost, setEditingPost] = useState(null);
     const [editContent, setEditContent] = useState("");
     const [editHashtags, setEditHashtags] = useState("");
-    const [replies, setReplies] = useState(["댓글내용",'댓글내용2']);
     const [commentText, setCommentText] = useState({});
     const nickname = '서자영';
     const postId = route.params.postId;
@@ -116,28 +115,32 @@ export default function EachPost({route}) {
     return (
         <View style={styles.container}>
             {editingPost === posts.id ? (
-                <View style={styles.postContainer}>
+                <View style={{...styles.postContainer}}>
+                    <Text style={{ marginBottom: 4, fontWeight: "bold", fontSize: 15, flex: 1 }}>{posts.authorNickname}</Text>
                     <TextInput
-                        style={styles.input}
+                        style={{ ...styles.postContent }}
                         value={editContent}
                         onChangeText={setEditContent}
                         placeholder="새 내용"
+                        multiline={true}
                     />
                     <TextInput
-                        style={styles.input}
+                        style={{ ...styles.hashtags,flex:1 }}
                         value={editHashtags}
                         onChangeText={setEditHashtags}
-                        placeholder="새 해시태그"
+                        placeholder="해시태그"
                     />
-                    <TouchableOpacity
-                        style={styles.button}
-                        onPress={() => updatePost(postId)}
-                    >
-                        <Text style={styles.buttonText}>수정 완료</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => setEditingPost(null)}>
-                        <Text style={styles.buttonText}>취소</Text>
-                    </TouchableOpacity>
+                    <View style={{flexDirection:"row",justifyContent:'flex-end'}}>
+                        <TouchableOpacity
+                            style={styles.editBtn}
+                            onPress={() => updatePost(postId)}
+                        >
+                            <Text style={styles.buttonText}>수정 완료</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.editBtn} onPress={() => setEditingPost(null)}>
+                            <Text style={styles.buttonText}>취소</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             ) : (<>
                     <View style={styles.postContainer}>
@@ -152,7 +155,8 @@ export default function EachPost({route}) {
                     <View style={styles.btnContainer}>
                         {/* 좋아요 */}
                         <TouchableOpacity style={styles.button} onPress={() => likePost(posts.id)}>
-                            <AntDesign name={'hearto'} size={IconSize} color={"red"} />
+                            <AntDesign name={'heart'} size={IconSize} color={"red"} /> 
+                            <Text>{posts.likeCount}</Text>
                             {/* 만일 눌렀다면 아래로 기본은 빈 하트로 */}
                             {/* <AntDesign name={'heart'} size={25} color={"red"} /> */}
                         </TouchableOpacity>
@@ -215,17 +219,33 @@ const styles = StyleSheet.create({
     container: { flex: 1, padding: 20, backgroundColor: '#f5f5f5',width:"100%",height:"100%"},
     header: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
     input: {
-        borderWidth: 1,
+        flex: 8,
+        borderWidth: 0,
         padding: 10,
         marginVertical: 5,
-        backgroundColor:"white",
+        backgroundColor: "white",
+        borderRadius: 9,
     },
     btnContainer: {
         flexDirection: "row",
         backgroundColor: "white"
     },
-    button: { backgroundColor: 'transparent', padding: 10, marginVertical: 5, alignItems: 'center',flex:1 },
-    buttonText: { color: 'white', fontWeight: 'bold' },
+    button: {
+        backgroundColor: 'transparent',
+        padding: 10, marginVertical: 5,
+        alignItems: 'center', flex: 1
+    },
+    editBtn: {
+        backgroundColor: "rgb(241, 160, 91)",
+        // backgroundColor:"orange",
+        padding: 10,
+        marginVertical: 5,
+        alignItems: 'center',
+        borderRadius: 5,
+        marginLeft: 10,
+        Width: 60,
+    },
+    buttonText: { color: 'black', fontWeight: 'bold' },
     postContainer: {
         // borderWidth: 1,
         backgroundColor:"white",
@@ -241,6 +261,7 @@ const styles = StyleSheet.create({
     postContent: {
         fontSize: 13,
         flex: 5,
+        flexShrink:3,
     },
     hashtags: { color: '#007bff' },
     reply: {
