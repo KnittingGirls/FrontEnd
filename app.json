@@ -35,6 +35,6 @@
     },
     "plugins": [
       "expo-secure-store"
-    ],"scheme":"frontend2"
+    ],"scheme":"myapp"
   }
 }

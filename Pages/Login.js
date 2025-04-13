@@ -12,8 +12,10 @@ import { Button } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { EXPO_PUBLIC_IPHOST } from "@env";
-const REDIRECT_SCHEME = "myapp://home"; // 앱으로 돌아올 URI
-const BACKEND_LOGIN_URL = `http://${EXPO_PUBLIC_IPHOST}:8080/auth/login`;
+import React from "react";
+
+const REDIRECT_SCHEME = "myapp://Home"; // 앱으로 돌아올 URI
+const BACKEND_LOGIN_URL = `http://192.168.45.14:8080/auth/login`;
 
 
 export default function Login({ navigation }) {
@@ -22,10 +24,9 @@ export default function Login({ navigation }) {
         const handleRedirect = async (event) => {
             const url = event.url;
             const tokenParam = Linking.parse(url).queryParams?.token;
-
+            const nicknameParam = Linking.parse(url).queryParams?.nickname;
             if (tokenParam) {
                 await SecureStore.setItemAsync("token", tokenParam);
-                navigation.replace("Home");
             } else {
                 // Alert.alert("로그인 실패", "토큰이 전달되지 않았습니다.");
                 console.log("로그인 실패", "토큰이 전달되지 않았습니다.");
@@ -44,9 +45,11 @@ export default function Login({ navigation }) {
     }, []);
 
     const openKakaoLogin = async () => {
-        await WebBrowser.openAuthSessionAsync(BACKEND_LOGIN_URL, REDIRECT_SCHEME);
+        const result = await WebBrowser.openAuthSessionAsync(BACKEND_LOGIN_URL, REDIRECT_SCHEME);
+        if (result.type === "success") {result.url.remove()}
         console.log("로그인 성공");
-        navigation.replace("Drawer");//이렇게 하면 첫 페이지로 돌아감
+        console.log(SecureStore.getItemAsync("token"));
+        // navigation.replace("Drawer");//이렇게 하면 첫 페이지로 돌아감
     };
     
     return (
