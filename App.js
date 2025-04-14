@@ -1,4 +1,5 @@
-// import { NavigationContainer } from '@react-navigation/native';
+import { AuthProvider } from "./AuthContext";
+import { useAuth } from "./AuthContext";
 import React from "react";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './Pages/Home';
@@ -12,16 +13,17 @@ import Login from './Pages/Login';
 import { createDrawerNavigator, DrawerToggleButton, DrawerActions } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import Community from './Pages/Community';
-import { StyleSheet, View, Dimensions, TouchableOpacity,Image } from 'react-native';
+import { StyleSheet, View, Dimensions, TouchableOpacity,Image ,Text} from 'react-native';
 import AllPosts from './Pages/Community/AllPosts';
 import EachPost from './Pages/Community/EachPost';
 // import MyPage from './Pages/Community/MyPost';
 import NewPost from './Pages/Community/NewPost';
 import MyPost from './Pages/Community/MyPost';
 import ScrapList from './Pages/Community/ScrapList';
-import { useAuth } from "./AuthContext";
-import { AuthProvider } from "./AuthContext";
 
+import { Platform } from "react-native";
+import { useEffect } from "react";
+import { useState } from "react";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -48,36 +50,62 @@ const MenuButton = ({ navigation }) => {
     </TouchableOpacity>
   );
 }
-const DrawerNavigator = () => (<Drawer.Navigator
-  drawerType="front"
-  initialRouteName="Home"
-  backBehavior='history'
-  screenOptions={{
-    drawerPosition: 'right',
-    backBehavior: "history",
-    // headerBackButtonDisplayMode: screenLeft,
-    headerLeft:
-      // () => <TouchableOpacity style={{ width: 30, height: 30 }} onPress={() => { navigation(-1) }}  >
-      //               <Image source={require('./assets/backBtn.svg')}/>
-      // </TouchableOpacity>
-      false,
-    headerRight: () => <DrawerToggleButton />,
-  }}
->
-  <Drawer.Screen name="Home" component={Home} options={{ ...options, drawerLabel: "홈화면" }} />
-  <Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} />
-  {/* {!token ? <Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} /> : <Drawer.Screen name="Home" component={Home} options={{ ...options, drawerLabel: "홈화면" }} />} */}
-  <Drawer.Screen name="NewPattern" component={NewPattern} options={{ ...options, drawerLabel: "도안 생성" }} />
-  <Drawer.Screen name="AllPosts" component={AllPosts} options={{ ...options, drawerLabel: "커뮤니티" }} />
-  <Drawer.Screen name="MyPost" component={MyPost} options={{ ...options, drawerLabel: "내가 쓴 글" }} />
-  <Drawer.Screen name="ScrapList" component={ScrapList} options={{ ...options, drawerLabel: "스크랩한 글" }} />
+const DrawerNavigator = () => {
+  const { token, isLoading } = useAuth();
+  return (
+    <Drawer.Navigator
+      drawerType="front"
+      initialRouteName="Home"
+      backBehavior='history'
+      screenOptions={{
+        drawerPosition: 'right',
+        backBehavior: "history",
+        // headerBackButtonDisplayMode: screenLeft,
+        headerLeft:
+          // () => <TouchableOpacity style={{ width: 30, height: 30 }} onPress={() => { navigation(-1) }}  >
+          //               <Image source={require('./assets/backBtn.svg')}/>
+          // </TouchableOpacity>
+          false,
+        headerRight: () => <DrawerToggleButton />,
+      }}
+    >
+    <Drawer.Screen name="Home" component={Home} options={{ ...options, drawerLabel: "홈화면" }} />
+    {!token ? 
+        <Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} />
+    : <Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그아웃" }} />}
+    {/* <Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} /> */}
+    {/* {!token ? <Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} /> : <Drawer.Screen name="Home" component={Home} options={{ ...options, drawerLabel: "홈화면" }} />} */}
+    <Drawer.Screen name="NewPattern" component={NewPattern} options={{ ...options, drawerLabel: "도안 생성" }} />
+    <Drawer.Screen name="AllPosts" component={AllPosts} options={{ ...options, drawerLabel: "커뮤니티" }} />
+    <Drawer.Screen name="MyPost" component={MyPost} options={{ ...options, drawerLabel: "내가 쓴 글" }} />
+    <Drawer.Screen name="ScrapList" component={ScrapList} options={{ ...options, drawerLabel: "스크랩한 글" }} />
 </Drawer.Navigator>
-)
+)}
 
 const AppNavigator = () => {
-  const { token, isLoading } = useAuth();
+  const [token, setToken] = useState();
+  useEffect(() => {
+      const fetchToken = async () => {
+      const storedToken = SecureStore.getItemAsync("token");
+      console.log("🔑 불러온 토큰:", storedToken);
+      if (storedToken) {
+        setToken(storedToken);
+      }
+    };
+    fetchToken();
+  }, []);
+  if (token) {
+    return(
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>ss</Text>
+      </View>
+    );
+  }
   console.log("token: ", token);
-  console.log("isLoading: ", isLoading);
+  // console.log("isLoading: ", isLoading);
+  console.log("현재 플랫폼:", Platform.OS);
+
+  
   return (
     <Stack.Navigator>
     <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false, presentation: 'card', detachPreviousScreen: false }} />

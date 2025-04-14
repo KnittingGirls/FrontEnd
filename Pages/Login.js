@@ -13,18 +13,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { EXPO_PUBLIC_IPHOST } from "@env";
 import React from "react";
+import { useAuth } from "../AuthContext";
 
 const REDIRECT_SCHEME = "myapp://Home"; // 앱으로 돌아올 URI
-const BACKEND_LOGIN_URL = `http://192.168.45.14:8080/auth/login`;
+const BACKEND_LOGIN_URL = `http://10.240.185.27:8080/auth/login`;
 
 
 export default function Login({ navigation }) {
     const sweetHouse = require("../assets/background/login_1.png");
+    const { savetoken } = useAuth();
     useEffect(() => {
         const handleRedirect = async (event) => {
             const url = event.url;
             const tokenParam = Linking.parse(url).queryParams?.token;
-            const nicknameParam = Linking.parse(url).queryParams?.nickname;
+            // const nicknameParam = Linking.parse(url).queryParams?.nickname;
             if (tokenParam) {
                 await SecureStore.setItemAsync("token", tokenParam);
             } else {
@@ -48,8 +50,10 @@ export default function Login({ navigation }) {
         const result = await WebBrowser.openAuthSessionAsync(BACKEND_LOGIN_URL, REDIRECT_SCHEME);
         if (result.type === "success") {result.url.remove()}
         console.log("로그인 성공");
-        console.log(SecureStore.getItemAsync("token"));
-        // navigation.replace("Drawer");//이렇게 하면 첫 페이지로 돌아감
+        const token =  SecureStore.getItemAsync("token");
+        console.log(token);
+        savetoken(token); //await를 안쓰니까 일단 넘어가긴 하는데 이게 그냥 넘어간건지 돼서 넘어간건지 모르겠다..
+        console.log("저장 완료");//여기까지 못가는 이유가 뭘까..?
     };
     
     return (

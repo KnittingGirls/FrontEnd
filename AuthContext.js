@@ -6,20 +6,37 @@ import * as SecureStore from "expo-secure-store";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState({});
+    const [token, setToken] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const loadToken = async () => {
-        const savedToken = await SecureStore.getItemAsync("token");
-        if (savedToken) {
-            setToken(savedToken);
-        }
-        setIsLoading(false);
-    };
+    useEffect(() => {
+        const loadToken = async () => {
+            try {
+                const storedToken = await SecureStore.getItemAsync("token");
+                console.log("🟢 SecureStore에서 불러온 토큰:", storedToken);
+                if (storedToken) {
+                    setToken(storedToken);
+                }
+            } catch (e) {
+                console.error("토큰 로딩 에러:", e);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    const saveToken = async (jwt) => {
-        await SecureStore.setItemAsync("token", jwt);
-        setToken(jwt);
+        loadToken();
+    }, []);
+    // const loadToken = async () => {
+    //     const storedToken = await SecureStore.getItemAsync('token');
+    //     console.log("🟢 SecureStore에서 불러온 토큰:", storedToken);
+    //     if (storedToken) {
+    //         setToken(storedToken);  // ✅ 이게 핵심!
+    //     }
+    //     setIsLoading(false);
+    // };
+    const savetoken = async (newtoken) => {
+        await SecureStore.setItemAsync("token", newtoken);
+        setToken(newtoken);
     };
 
     const logout = async () => {
@@ -27,12 +44,12 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
     };
 
-    useEffect(() => {
-        loadToken();
-    }, []);
+    // useEffect(() => {
+    //     loadToken();
+    // }, []);
 
     return (
-        <AuthContext.Provider value={{ token, saveToken, logout, isLoading }}>
+        <AuthContext.Provider value={{ token, savetoken, logout, isLoading }}>
             {children}
         </AuthContext.Provider>
     );
