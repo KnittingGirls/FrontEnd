@@ -5,6 +5,8 @@ import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'r
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const baseUrl = 'http://localhost:8080/posts';
+import { useAuth } from "../../AuthContext";
+
 
 export default function EachPost({route}) {
     const [posts, setPosts] = useState([]);
@@ -12,7 +14,7 @@ export default function EachPost({route}) {
     const [editContent, setEditContent] = useState("");
     const [editHashtags, setEditHashtags] = useState("");
     const [commentText, setCommentText] = useState({});
-    const nickname = '서자영';
+    const { token, nickname, isLoading } = useAuth(); 
     const postId = route.params.postId;
     const IconSize = 20;
     const fetchPosts = async () => {

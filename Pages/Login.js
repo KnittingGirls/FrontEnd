@@ -5,11 +5,13 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import * as Linking from "expo-linking";
 import * as SecureStore from "expo-secure-store";
 import * as WebBrowser from "expo-web-browser";
+import * as AuthSession from 'expo-auth-session';
 
 import BigCustomBtn from '../components/BigCustomBtn';
 import { Button } from "react-native";
 // import { login, getProfile } from "@react-native-seoul/kakao-login";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { useNavigation } from "@react-navigation/native";
 import { EXPO_PUBLIC_IPHOST } from "@env";
 import React from "react";
@@ -26,9 +28,13 @@ export default function Login({ navigation }) {
         const handleRedirect = async (event) => {
             const url = event.url;
             const tokenParam = Linking.parse(url).queryParams?.token;
-            // const nicknameParam = Linking.parse(url).queryParams?.nickname;
+            const id = Linking.parse(url).queryParams?.id;
+            const nicknameParam = Linking.parse(url).queryParams?.nickname;
+            console.log(url);
+            console.log(Linking.parse(url));
             if (tokenParam) {
                 await SecureStore.setItemAsync("token", tokenParam);
+                await SecureStore.setItemAsync("nickname", nicknameParam);
             } else {
                 // Alert.alert("로그인 실패", "토큰이 전달되지 않았습니다.");
                 console.log("로그인 실패", "토큰이 전달되지 않았습니다.");
@@ -38,6 +44,7 @@ export default function Login({ navigation }) {
         const subscription = Linking.addEventListener("url", handleRedirect);
 
         Linking.getInitialURL().then((url) => {
+            console.log("초기 URL:", url); // <-- 이거 찍어보기
             if (url) handleRedirect({ url });
         });
 
@@ -47,13 +54,16 @@ export default function Login({ navigation }) {
     }, []);
 
     const openKakaoLogin = async () => {
-        const result = await WebBrowser.openAuthSessionAsync(BACKEND_LOGIN_URL, REDIRECT_SCHEME);
-        if (result.type === "success") {result.url.remove()}
-        console.log("로그인 성공");
-        const token =  SecureStore.getItemAsync("token");
-        console.log(token);
-        savetoken(token); //await를 안쓰니까 일단 넘어가긴 하는데 이게 그냥 넘어간건지 돼서 넘어간건지 모르겠다..
-        console.log("저장 완료");//여기까지 못가는 이유가 뭘까..?
+        const result =await WebBrowser.openAuthSessionAsync(BACKEND_LOGIN_URL, REDIRECT_SCHEME);
+        const token = await SecureStore.getItemAsync("token");
+        const nickname = SecureStore.getItemAsync("nickname");
+        console.log(result.type);
+        if (result.type === "success") {
+            savetoken(token,nickname); //await를 안쓰니까 일단 넘어가긴 하는데 이게 그냥 넘어간건지 돼서 넘어간건지 모르겠다..
+            console.log("저장 완료");//여기까지 못가는 이유가 뭘까..?
+            console.log(token);
+            result.url.remove();
+        }
     };
     
     return (

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet ,Image} from 'react-native';
 import * as ImagePicker from "expo-image-picker";
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import { useAuth } from "../../AuthContext";
 
 const baseUrl = 'http://localhost:8080/posts';
 
@@ -12,7 +13,7 @@ export default function NewPost({ navigation }) {
     const [newPostContent, setNewPostContent] = useState("");
     const [newHashtags, setNewHashtags] = useState("");
     const [selectedImage, setSelectedImage] = useState(null);
-    const nickname = '서자영'; //   
+    const { token, nickname, isLoading } = useAuth(); 
     
     // 이미지 선택 함수
     const pickImage = async () => {
@@ -42,7 +43,7 @@ export default function NewPost({ navigation }) {
             });
             setNewPostContent("");
             setNewHashtags("");
-            // navigation.navigate("AllPosts"); 
+            // navigation.navigate("AllPosts"); //이렇게 하면 stack navigation을 써서 Drawer가 안보임 만약에 Drawer로 넣으면..?
         } catch (error) {
             console.error('게시글 작성 에러:', error);
         }
@@ -50,7 +51,7 @@ export default function NewPost({ navigation }) {
 
     return (
         <View style={styles.container}>
-            {/* <Text style={styles.header}>게시물 작성</Text> */}
+            <Text style={styles.header}>게시물 작성</Text>
 
             {/* 게시글 작성 */}
             <TextInput
@@ -73,12 +74,15 @@ export default function NewPost({ navigation }) {
                 )}
                 
             </View>
-            <TouchableOpacity onPress={pickImage} style={styles.button}>
-                <Text style={styles.buttonText}>이미지 업로드</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={createPost}>
-                <Text style={styles.buttonText}>게시글 작성</Text>
-            </TouchableOpacity>
+            <View style={{flex:1}}>
+                <TouchableOpacity onPress={pickImage} style={styles.button}>
+                    <Text style={styles.buttonText}>이미지 업로드</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={createPost}>
+                    <Text style={styles.buttonText}>게시글 작성</Text>
+                </TouchableOpacity>
+            </View>
+            
         </View>
     );
 }
@@ -87,7 +91,7 @@ const styles = StyleSheet.create({
     container: { flex: 1, padding: 20,backgroundColor:"white" },
     header: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
     input: { borderWidth: 1, padding: 10, marginVertical: 5 ,flexShrink:2,flex:4},
-    button: { backgroundColor: "rgb(241, 160, 91)", padding: 10, marginVertical: 5, alignItems: 'center' },
+    button: { backgroundColor: "rgb(241, 160, 91)", padding: 10, marginVertical: 5, alignItems: 'center'},
     buttonText: { color: 'black', fontWeight: 'bold' },
     postContainer: { borderWidth: 1, padding: 10, marginVertical: 5 },
     postContent: { fontSize: 18 },

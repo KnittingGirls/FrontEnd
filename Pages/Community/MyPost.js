@@ -4,13 +4,14 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import { useAuth } from "../../AuthContext";
 
 const baseUrl = 'http://localhost:8080/posts';
 
 export default function MyPost({ navigation}) {
     const [myposts, setMyPosts] = useState([]);
     const [posts, setPosts] = useState([]);
-    const nickname = '서자영';
+    const { token, nickname, isLoading } = useAuth(); 
 
     // 내가 쓴 게시물 조회
     const fetchmyPosts = async () => {

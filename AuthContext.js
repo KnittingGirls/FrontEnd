@@ -7,15 +7,18 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(null);
+    const [nickname, setNickname] = useState('testnickname');
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const loadToken = async () => {
             try {
                 const storedToken = await SecureStore.getItemAsync("token");
-                console.log("🟢 SecureStore에서 불러온 토큰:", storedToken);
+                const storedNickname = await SecureStore.getItemAsync("nickname");
+                // console.log("🟢 SecureStore에서 불러온 토큰:", storedToken);
                 if (storedToken) {
                     setToken(storedToken);
+                    setNickname(storedNickname);
                 }
             } catch (e) {
                 console.error("토큰 로딩 에러:", e);
@@ -34,14 +37,18 @@ export const AuthProvider = ({ children }) => {
     //     }
     //     setIsLoading(false);
     // };
-    const savetoken = async (newtoken) => {
+    const savetoken = async (newtoken, newnickname) => {
         await SecureStore.setItemAsync("token", newtoken);
+        await SecureStore.setItemAsync("nickname", newnickname);
         setToken(newtoken);
+        setNickname(newnickname);
     };
 
     const logout = async () => {
         await SecureStore.deleteItemAsync("token");
+        await SecureStore.deleteItemAsync("nickname");
         setToken(null);
+        setNickname(null);
     };
 
     // useEffect(() => {
@@ -49,7 +56,7 @@ export const AuthProvider = ({ children }) => {
     // }, []);
 
     return (
-        <AuthContext.Provider value={{ token, savetoken, logout, isLoading }}>
+        <AuthContext.Provider value={{ token, nickname, savetoken, logout, isLoading }}>
             {children}
         </AuthContext.Provider>
     );
