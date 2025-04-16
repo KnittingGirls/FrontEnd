@@ -5,11 +5,17 @@ import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet ,Image} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-const baseUrl = 'http://localhost:8080/posts';
+import { EXPO_PUBLIC_IPHOST } from "@env";
+import * as SecureStore from "expo-secure-store";
+import { useAuth } from "../../AuthContext";
 
-export default function AllPosts({ navigation}) {
+const baseUrl = `http://192.168.45.124:8080/posts`;
+
+export default function AllPosts({ navigation }) {
+    // const [token, setToken] = useState();
+    // const [nickname, setNickname] = useState('서자영');
+
     const [posts, setPosts] = useState([]);
-    
     const [newPostContent, setNewPostContent] = useState("");
     const [newHashtags, setNewHashtags] = useState("");
     const [searchTag, setSearchTag] = useState("");
@@ -17,13 +23,12 @@ export default function AllPosts({ navigation}) {
     const [editingPost, setEditingPost] = useState(null);
     const [editContent, setEditContent] = useState("");
     const [editHashtags, setEditHashtags] = useState("");
-
-    const nickname = '서자영';
-
+    const { token, nickname, isLoading } = useAuth(); 
+    
     // 전체 게시글 조회
     const fetchPosts = async () => {
         try {
-            const response = await fetch(`${baseUrl}`);
+            const response = await fetch(baseUrl);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -59,6 +64,7 @@ export default function AllPosts({ navigation}) {
             const response = await fetch(`${baseUrl}/bookmarks?nickname=${nickname}`);
             const data = await response.json();
             setPosts(data);
+            // console.log(nickname);
         } catch (error) {
             console.error('북마크 조회 에러:', error);
         }
