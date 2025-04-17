@@ -98,7 +98,7 @@ export default function AllPosts({ navigation }) {
                     data={posts}
                     keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item }) => (
-                        <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.navigate("EachPost", {postId:item.id}) }}>
+                        <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.replace("EachPost", {postId:item.id}) }}>
                             <Text style={{marginBottom:10, fontWeight:"bold",fontSize:15}}>{item.authorNickname}</Text>
                             {/* <Image source={item.imageData} style={{ flex: 2,backgroundColor:"gray",width:"auto"}} /> */}
                             <View style={{flex:1}}>
@@ -115,7 +115,7 @@ export default function AllPosts({ navigation }) {
                 <TouchableOpacity style={styles.button} onPress={fetchBookmarks}>
                     <FontAwesome name={'bookmark'} size={25} color={"black"} />  
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate("NewPost") }}><AntDesign name={'edit'} size={25} color={"black"} /> </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => { navigation.replace("NewPost"); }}><AntDesign name={'edit'} size={25} color={"black"}/></TouchableOpacity>
             </View>
         </View>
     );
