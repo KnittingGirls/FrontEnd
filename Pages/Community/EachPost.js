@@ -7,8 +7,8 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const baseUrl = 'http://localhost:8080/posts';
 import { useAuth } from "../../AuthContext";
 
-
-export default function EachPost({route}) {
+export default function EachPost({ navigation,route }) {
+    // const navigate = useNavigation();
     const [posts, setPosts] = useState([]);
     const [editingPost, setEditingPost] = useState(null);
     const [editContent, setEditContent] = useState("");
@@ -54,6 +54,7 @@ export default function EachPost({route}) {
                 method: 'DELETE',
             });
             fetchPosts();
+            navigation.replace('AllPosts');
         } catch (error) {
             console.error('게시글 삭제 에러:', error);
         }
@@ -194,7 +195,11 @@ export default function EachPost({route}) {
                                 </View>
                             ))
                         )}
-                        
+                    </View>
+                    <View style={styles.newreply}>
+                        <TouchableOpacity style={{ ...styles.replyBtn, flex: 1 }} onPress={() => navigation.replace('AllPosts')}>
+                            <AntDesign name={'back'} size={25} color={"black"} />
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.newreply}>
                         <TextInput
