@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import {StyleSheet,Text,View,ImageBackground,Dimensions,TouchableOpacity,Image,} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import CustomButton from "../components/CustomButton";
-
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import { EXPO_PUBLIC_IPHOST } from "@env";
@@ -10,7 +11,7 @@ import { EXPO_PUBLIC_IPHOST } from "@env";
 export default function UploadImg({ navigation }) {
     const sweetHouse = require("../assets/background/sweetHouse_1.png");
     const [selectedImage, setSelectedImage] = useState(null);
-
+    const [pdfPath, setPdfPath] = useState('');
     // 이미지 선택 함수
     const pickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -48,42 +49,78 @@ export default function UploadImg({ navigation }) {
             console.log("이미지 업로드 요청 시작");
 
             //서버 IP 주소로 아래 주소 변경 필요 
-            const response = await fetch(`http://172.30.1.57:8080/model-server/predict`, {
+            const response = await fetch(`http://192.168.45.18:8080/model-server/predict`, {
                 method: "POST",
                 body: formData,
             });
 
-            console.log("응답 상태:", response);
-            const result = await response.text();
-
+            console.log("응답 상태:", response.status);
+            const result = await response.json();
             if (!response.ok) {
                 console.error("서버 오류:", response.status, response.statusText);
                 alert("서버 오류: 이미지 업로드 실패");
                 return;
             }
-
-            alert("업로드 성공: " + result);
-            navigation.replace("ShowPattern");            
-
+            alert("업로드 성공: " + result.message);
+            console.log(result.pdf_path);
+            setPdfPath(result.pdf_path);
+            console.log(pdfPath);
+            console.log(result.mask_path);
 
         } catch (error) {
             console.error("요청 오류:", error);
             alert("이미지 업로드 실패");
         }
     };
+   
+    const downloadPDF = async () => {
+        try {
+            const fileUrl =`http://192.168.45.18:8080/model-server/pdfs/${pdfPath}`; // 예: http://192.168.0.5:8080/files/sample.pdf
+            // const fileName = pdfPath;
+            const fileUri = FileSystem.documentDirectory + pdfPath;
 
+            // 파일 다운로드
+            const { uri,status } = await FileSystem.downloadAsync(fileUrl, fileUri);
+            console.log('✅ 파일 저장 위치:', uri);
+            if (status != 200) { console.log("문제있다",status); }
+
+            alert('다운로드 완료', 'PDF 파일이 저장되었습니다.');
+
+            // 파일 공유 또는 열기
+            if (await Sharing.isAvailableAsync()) {
+                await Sharing.shareAsync(uri);
+            } else {
+                alert('공유 불가', '이 디바이스에서는 공유 기능을 사용할 수 없습니다.');
+            }
+        } catch (error) {
+            console.error('❌ 파일 다운로드 실패:', error);
+            alert('오류', '파일 다운로드 중 오류가 발생했습니다.');
+        }
+    };
+    
     return (
         <View style={ styles.container}>
             <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
                 <View style={{ flex: 1 }}></View>
-                <View style={styles.upload}>
-                    {selectedImage && (
-                        <Image source={{ uri: selectedImage.uri }} style={styles.img} />
-                    )}
-                    <TouchableOpacity onPress={pickImage} style={styles.pickButton}>
-                        <Text>이미지 선택</Text>
-                    </TouchableOpacity>
-                </View>
+                {pdfPath ?
+                    <View style={styles.upload}>
+                        {selectedImage && (
+                            <Image source={{ uri: selectedImage.uri }} style={styles.img} />
+                        )}
+                        <TouchableOpacity onPress={downloadPDF} style={styles.pickButton}>
+                            <Text>pdf 다운로드</Text>
+                        </TouchableOpacity>
+                    </View>
+                    :
+                    <View style={styles.upload}>
+                        {selectedImage && (
+                            <Image source={{ uri: selectedImage.uri }} style={styles.img} />
+                        )}
+                        <TouchableOpacity onPress={pickImage} style={styles.pickButton}>
+                            <Text>이미지 선택</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
                 <View style={styles.btnContainer}>
                     <CustomButton title="업로드" onPress={uploadImage} />
                 </View>
