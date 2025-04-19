@@ -38,7 +38,7 @@ export default function UploadImg({ navigation }) {
             return;
         }
         const formData = new FormData();
-        formData.append("image", {
+        formData.append("file", {
             uri: selectedImage.uri,
             type: selectedImage.mimeType, // 또는 적절한 MIME 타입 (예: image/png)
             name: selectedImage.fileName, // 백엔드에서 요구하는 파일 이름
@@ -48,13 +48,12 @@ export default function UploadImg({ navigation }) {
             console.log("이미지 업로드 요청 시작");
 
             //서버 IP 주소로 아래 주소 변경 필요 
-            const response = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/api/images/upload`, {
-
+            const response = await fetch(`http://172.30.1.57:8080/model-server/predict`, {
                 method: "POST",
                 body: formData,
             });
 
-            console.log("응답 상태:", response.status);
+            console.log("응답 상태:", response);
             const result = await response.text();
 
             if (!response.ok) {
@@ -64,7 +63,7 @@ export default function UploadImg({ navigation }) {
             }
 
             alert("업로드 성공: " + result);
-            navigation.navigate("ShowPattern");            
+            navigation.replace("ShowPattern");            
 
 
         } catch (error) {
