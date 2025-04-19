@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-const baseUrl = 'http://localhost:8080/posts';
 import { useAuth } from "../../AuthContext";
 
+const baseUrl = `http://192.168.45.18:8080/posts`;
 export default function EachPost({ navigation,route }) {
     // const navigate = useNavigation();
     const [posts, setPosts] = useState([]);
@@ -117,11 +117,12 @@ export default function EachPost({ navigation,route }) {
 
     return (
         <View style={styles.container}>
-            {editingPost === posts.id ? (
-                <View style={{...styles.postContainer}}>
+            {editingPost === posts.id && posts.authorNickname==nickname ? (
+                <View style={{flex:12}}>
+                <View style={{...styles.postContainer,flex:3}}>
                     <Text style={{ marginBottom: 4, fontWeight: "bold", fontSize: 15, flex: 1 }}>{posts.authorNickname}</Text>
                     <TextInput
-                        style={{ ...styles.postContent }}
+                        style={{ ...styles.postContent,flex:4 }}
                         value={editContent}
                         onChangeText={setEditContent}
                         placeholder="새 내용"
@@ -133,7 +134,9 @@ export default function EachPost({ navigation,route }) {
                         onChangeText={setEditHashtags}
                         placeholder="해시태그"
                     />
-                    <View style={{flexDirection:"row",justifyContent:'flex-end'}}>
+                   
+                    </View>
+                    <View style={{ flexDirection: "row", justifyContent: 'flex-end', flex: 1 }}>
                         <TouchableOpacity
                             style={styles.editBtn}
                             onPress={() => updatePost(postId)}
@@ -144,8 +147,8 @@ export default function EachPost({ navigation,route }) {
                             <Text style={styles.buttonText}>취소</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
-            ) : (<>
+                    <View style={{flex:5,flexShrink:4}}></View>
+                </View>) : (<>
                     <View style={styles.postContainer}>
                         <Text style={{ marginBottom: 4, fontWeight: "bold",fontSize:15,flex:1 }}>{posts.authorNickname}</Text>
                         <Text style={styles.postContent}>
@@ -182,7 +185,7 @@ export default function EachPost({ navigation,route }) {
                         </TouchableOpacity>
 
                         {/* 삭제 버튼 */}
-                        <TouchableOpacity style={styles.button} onPress={() => deletePost(posts.id)}>
+                        <TouchableOpacity style={styles.button} onPress={()=>{if(posts.authorNickname==nickname){deletePost(posts.id)}}}>
                             <AntDesign name={'delete'} size={IconSize} color={"black"} />
                         </TouchableOpacity>
                     </View>
@@ -268,9 +271,13 @@ const styles = StyleSheet.create({
     postContent: {
         fontSize: 13,
         flex: 5,
-        flexShrink:3,
+        flexShrink: 3,
+        textAlignVertical:'top'
     },
-    hashtags: { color: '#007bff' },
+    hashtags: {
+        color: '#007bff',
+        textAlignVertical: 'top'
+     },
     reply: {
         borderBottomWidth: 1,
         borderBottomColor: '#f5f5f5',
