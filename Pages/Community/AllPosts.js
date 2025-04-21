@@ -24,13 +24,14 @@ export default function AllPosts({ navigation }) {
     const [editContent, setEditContent] = useState("");
     const [editHashtags, setEditHashtags] = useState("");
     const { token, nickname, isLoading } = useAuth(); 
-    
+    const [showBookmark, setShowBookmark] = useState(false);
     // 전체 게시글 조회
     const fetchPosts = async () => {
         try {
             const response = await fetch(baseUrl);
             const data = await response.json();
             setPosts(data);
+            setShowBookmark(false);
         } catch (error) {
             console.error('게시글 조회 에러:', error);
         }
@@ -64,6 +65,7 @@ export default function AllPosts({ navigation }) {
             const response = await fetch(`${baseUrl}/bookmarks?nickname=${nickname}`);
             const data = await response.json();
             setPosts(data);
+            setShowBookmark(true);
             // console.log(nickname);
         } catch (error) {
             console.error('북마크 조회 에러:', error);
@@ -112,7 +114,7 @@ export default function AllPosts({ navigation }) {
             </View>
             {/* 북마크 목록 */}
             <View style={styles.btnContainer}>
-                <TouchableOpacity style={styles.button} onPress={fetchBookmarks}>
+                <TouchableOpacity style={styles.button} onPress={() => { if (showBookmark) { fetchPosts()}else {fetchBookmarks()}}}>
                     <FontAwesome name={'bookmark'} size={25} color={"black"} />  
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => { navigation.replace("NewPost"); }}><AntDesign name={'edit'} size={25} color={"black"}/></TouchableOpacity>
