@@ -24,6 +24,7 @@ export default function EachPost({ navigation,route }) {
             // const replyres = await fetch(`${baseUrl}/${postId}/comment`); 
             // const replydata = await replyres.json();
             setPosts(data);
+            console.log(data);
             // setReplies(replydata);
         } catch (error) {
             console.error('게시글 조회 에러:', error);
@@ -203,10 +204,11 @@ export default function EachPost({ navigation,route }) {
                         <TouchableOpacity style={{ ...styles.replyBtn, flex: 1 }} onPress={() => navigation.replace('AllPosts')}>
                             <AntDesign name={'back'} size={25} color={"black"} />
                         </TouchableOpacity>
+                        <View style={{flex:5}}></View>
                     </View>
                     <View style={styles.newreply}>
                         <TextInput
-                            style={{ ...styles.input, height: 60, flex: 8 }}
+                            style={{ ...styles.input, height: "fit-content",minHeight:60, flex: 8 }}
                             placeholder="댓글 입력"
                             value={commentText[posts.id] || ""}
                             onChangeText={(text) =>
@@ -214,7 +216,7 @@ export default function EachPost({ navigation,route }) {
                             }
                             multiline={true}
                         />
-                        <TouchableOpacity style={{ ...styles.replyBtn, flex: 1 }} onPress={() => commentPost(posts.id)}>
+                        <TouchableOpacity style={{ ...styles.replyBtn,minHeight:60, flex: 1 }} onPress={() => commentPost(posts.id)}>
                             <FontAwesome name={'send'} size={25} color={"black"} />
                         </TouchableOpacity>
                     </View>
@@ -284,11 +286,13 @@ const styles = StyleSheet.create({
         marginVertical: 0,
         // marginHorizontal: 10,
         padding: 10,
+        paddingVertical:15,
         backgroundColor: "white",
         borderColor: "gray",
         minHeight: 50,
+        height: "fit-content",
         // flex: 1,
-        flexGrow:1,
+        // flexGrow:1,
         justifyContent: "space-between",
         // flexDirection: "row"
     },
@@ -309,8 +313,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 5,
         // marginLeft: 10,
-        width: "100%",
-        height:"100%",
+        width: "auto",
+        height:"auto",
         // minWidth: "fit-content",
         // maxHeight:"fit-content",
         justifyContent: "center",
