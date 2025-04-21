@@ -61,11 +61,11 @@ export default function UploadImg({ navigation }) {
                 alert("서버 오류: 이미지 업로드 실패");
                 return;
             }
-            alert("업로드 성공: " + result.message);
-            console.log(result.pdf_path);
-            setPdfPath(result.pdf_path);
+            // alert("업로드 성공: " + result.message);
+            console.log(result.pdf_filename);
+            setPdfPath(result.pdf_filename);
             console.log(pdfPath);
-            console.log(result.mask_path);
+            // console.log(result.mask_path);
 
         } catch (error) {
             console.error("요청 오류:", error);
@@ -75,7 +75,7 @@ export default function UploadImg({ navigation }) {
    
     const downloadPDF = async () => {
         try {
-            const fileUrl =`http://192.168.45.18:8080/model-server/pdfs/${pdfPath}`; // 예: http://192.168.0.5:8080/files/sample.pdf
+            const fileUrl =`http://10.240.175.52:8000/pdfs/${pdfPath}`; // 예: http://192.168.0.5:8080/files/sample.pdf
             // const fileName = pdfPath;
             const fileUri = FileSystem.documentDirectory + pdfPath;
 
@@ -84,7 +84,7 @@ export default function UploadImg({ navigation }) {
             console.log('✅ 파일 저장 위치:', uri);
             if (status != 200) { console.log("문제있다",status); }
 
-            alert('다운로드 완료', 'PDF 파일이 저장되었습니다.');
+            // alert('다운로드 완료', 'PDF 파일이 저장되었습니다.');
 
             // 파일 공유 또는 열기
             if (await Sharing.isAvailableAsync()) {
@@ -107,9 +107,9 @@ export default function UploadImg({ navigation }) {
                         {selectedImage && (
                             <Image source={{ uri: selectedImage.uri }} style={styles.img} />
                         )}
-                        <TouchableOpacity onPress={downloadPDF} style={styles.pickButton}>
+                        {/* <TouchableOpacity onPress={downloadPDF} style={styles.pickButton}>
                             <Text>pdf 다운로드</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                     :
                     <View style={styles.upload}>
@@ -121,9 +121,16 @@ export default function UploadImg({ navigation }) {
                         </TouchableOpacity>
                     </View>
                 }
-                <View style={styles.btnContainer}>
-                    <CustomButton title="업로드" onPress={uploadImage} />
-                </View>
+                {pdfPath ?
+                    <View style={styles.btnContainer2}>
+                        <CustomButton title="저장/공유" onPress={downloadPDF} />
+                        <CustomButton title="완료" onPress={() => navigation.replace("Drawer")} />
+                    </View>
+                    :
+                    <View style={styles.btnContainer}>
+                        <CustomButton title="업로드" onPress={uploadImage} />
+                    </View>
+                }
             </ImageBackground>
         </View>
     );
@@ -159,6 +166,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#ddd",
         borderRadius: 5,
         marginTop: 10,
+    },
+    btnContainer2: {
+        flex: 2,
+        marginLeft: '33%',
+        marginTop: '3%',
+        alignItems: 'right',
+        flexDirection: 'row'
     },
     btnContainer: {
         flex: 2,
