@@ -5,12 +5,15 @@ import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet ,Image} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import { EXPO_PUBLIC_IPHOST } from "@env";
+import { EXPO_PUBLIC_IPHOST, EXPO_POST_BASE_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import { useAuth } from "../../AuthContext";
+const imageUri = [
+    require("./../../assets/SelectActivity/free-icon-knitting-2780135.png"),
+    require("./../../assets/SelectActivity/free-icon-question-mark-9797431.png")
+];
 
-const baseUrl = `http://192.168.45.124:8080/posts`;
-
+const baseUrl = `http://192.168.45.37:8080/posts`;
 export default function AllPosts({ navigation }) {
     // const [token, setToken] = useState();
     // const [nickname, setNickname] = useState('서자영');
@@ -28,7 +31,7 @@ export default function AllPosts({ navigation }) {
     // 전체 게시글 조회
     const fetchPosts = async () => {
         try {
-            const response = await fetch(baseUrl);
+            const response = await fetch(EXPO_POST_BASE_URL);
             const data = await response.json();
             setPosts(data);
             setShowBookmark(false);
@@ -40,7 +43,7 @@ export default function AllPosts({ navigation }) {
     // 해시태그 검색
     const searchByHashtag = async () => {
         try {
-            const response = await fetch(`${baseUrl}/search?tag=${encodeURIComponent(searchTag)}`);
+            const response = await fetch(`${EXPO_POST_BASE_URL}/search?tag=${encodeURIComponent(searchTag)}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -51,7 +54,7 @@ export default function AllPosts({ navigation }) {
     // 작성자로 검색
     const searchByUser = async () => {
         try {
-            const response = await fetch(`${baseUrl}/user?nickname=${searchNickname}`);
+            const response = await fetch(`${EXPO_POST_BASE_URL}/user?nickname=${searchNickname}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -62,7 +65,7 @@ export default function AllPosts({ navigation }) {
     // 북마크 목록 조회
     const fetchBookmarks = async () => {
         try {
-            const response = await fetch(`${baseUrl}/bookmarks?nickname=${nickname}`);
+            const response = await fetch(`${EXPO_POST_BASE_URL}/bookmarks?nickname=${nickname}`);
             const data = await response.json();
             setPosts(data);
             setShowBookmark(true);
@@ -99,12 +102,18 @@ export default function AllPosts({ navigation }) {
                 <FlatList
                     data={posts}
                     keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
+                    renderItem={({ item,index }) => (
                         <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.replace("EachPost", {postId:item.id}) }}>
                             <Text style={{marginBottom:10, fontWeight:"bold",fontSize:15}}>{item.authorNickname}</Text>
                             {/* <Image source={item.imageData} style={{ flex: 2,backgroundColor:"gray",width:"auto"}} /> */}
                             <View style={{flex:1}}>
                                 <Text style={styles.postContent}>{item.content}</Text>
+                                {/* <Image
+                                    source={imageUri[1] }
+                                    style={styles.postImage}
+                                /> */}
+                                {item.imageData>1 ? <Image source={item.imageData} style={styles.postImage}/>
+                                    : <Image source={imageUri[index]} style={styles.postImage}/>} 
                                 <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
                                 <Text style={{flex:1}}>❤️ {item.likeCount}</Text>
                             </View>
@@ -181,6 +190,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-end",
         padding: 10,
-    }
+    },
+    postImage:{
+        width: "100",
+        height: "100",
+        // backgroundColor:"red"
+    },
 });
 
