@@ -5,8 +5,8 @@ import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'r
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useAuth } from "../../AuthContext";
+import { EXPO_PUBLIC_IPHOST, EXPO_POST_BASE_URL } from "@env";
 
-const baseUrl = `http://192.168.45.18:8080/posts`;
 export default function EachPost({ navigation,route }) {
     // const navigate = useNavigation();
     const [posts, setPosts] = useState([]);
@@ -19,7 +19,7 @@ export default function EachPost({ navigation,route }) {
     const IconSize = 20;
     const fetchPosts = async () => {
         try {
-            const response = await fetch(`${baseUrl}/${postId}`); //이 주소가 맞는지 확인 필요함
+            const response = await fetch(`${EXPO_POST_BASE_URL}/${postId}`); //이 주소가 맞는지 확인 필요함
             const data = await response.json();
             // const replyres = await fetch(`${baseUrl}/${postId}/comment`); 
             // const replydata = await replyres.json();
@@ -33,7 +33,7 @@ export default function EachPost({ navigation,route }) {
     // 게시글 수정
     const updatePost = async (postId) => {
         try {
-            await fetch(`${baseUrl}/${postId}?nickname=${nickname}`, {
+            await fetch(`${EXPO_POST_BASE_URL}/${postId}?nickname=${nickname}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -51,7 +51,7 @@ export default function EachPost({ navigation,route }) {
     // 게시글 삭제
     const deletePost = async (postId) => {
         try {
-            await fetch(`${baseUrl}/${postId}?nickname=${nickname}`, {
+            await fetch(`${EXPO_POST_BASE_URL}/${postId}?nickname=${nickname}`, {
                 method: 'DELETE',
             });
             fetchPosts();
@@ -64,7 +64,7 @@ export default function EachPost({ navigation,route }) {
     // 게시글 좋아요
     const likePost = async (postId) => {
         try {
-            await fetch(`${baseUrl}/${postId}/like?nickname=${nickname}`, { method: 'POST' });
+            await fetch(`${EXPO_POST_BASE_URL}/${postId}/like?nickname=${nickname}`, { method: 'POST' });
             fetchPosts();
         } catch (error) {
             console.error('좋아요 에러:', error);
@@ -74,7 +74,7 @@ export default function EachPost({ navigation,route }) {
     // 게시글 북마크
     const bookmarkPost = async (postId) => {
         try {
-            await fetch(`${baseUrl}/${postId}/bookmark?nickname=${nickname}`, { method: 'POST' });
+            await fetch(`${EXPO_POST_BASE_URL}/${postId}/bookmark?nickname=${nickname}`, { method: 'POST' });
             fetchPosts();
         } catch (error) {
             console.error('북마크 에러:', error);
@@ -84,7 +84,7 @@ export default function EachPost({ navigation,route }) {
     // 북마크 목록 조회
     const fetchBookmarks = async () => {
         try {
-            const response = await fetch(`${baseUrl}/bookmarks?nickname=${nickname}`);
+            const response = await fetch(`${EXPO_POST_BASE_URL}/bookmarks?nickname=${nickname}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -98,7 +98,7 @@ export default function EachPost({ navigation,route }) {
             const encodedContent = encodeURIComponent(commentText[postId]);
             const encodedNickname = encodeURIComponent(nickname);
 
-            const response = await fetch(`${baseUrl}/${postId}/comment?nickname=${encodedNickname}&content=${encodedContent}`, {
+            const response = await fetch(`${EXPO_POST_BASE_URL}/${postId}/comment?nickname=${encodedNickname}&content=${encodedContent}`, {
                 method: 'POST',
             });
 
