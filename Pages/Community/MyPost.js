@@ -5,8 +5,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { useAuth } from "../../AuthContext";
-
-const baseUrl = 'http://localhost:8080/posts';
+import { EXPO_PUBLIC_IPHOST, EXPO_POST_BASE_URL } from "@env";
 
 export default function MyPost({ navigation}) {
     const [myposts, setMyPosts] = useState([]);
@@ -16,7 +15,7 @@ export default function MyPost({ navigation}) {
     // 내가 쓴 게시물 조회
     const fetchmyPosts = async () => {
         try {
-            const response = await fetch(`${baseUrl}/user?nickname=${nickname}`);
+            const response = await fetch(`${EXPO_POST_BASE_URL}/user?nickname=${nickname}`);
             const data = await response.json();
             setMyPosts(data);
         } catch (error) {
@@ -27,7 +26,7 @@ export default function MyPost({ navigation}) {
     // 북마크 목록 조회
     const fetchBookmarks = async () => {
         try {
-            const response = await fetch(`${baseUrl}/bookmarks?nickname=${nickname}`);
+            const response = await fetch(`${EXPO_POST_BASE_URL}/bookmarks?nickname=${nickname}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
