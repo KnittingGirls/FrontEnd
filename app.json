@@ -34,11 +34,16 @@
       }
     },
     "plugins": [
-      ["expo-secure-store",{
+      [
+        "expo-secure-store",
+        {
           "configureAndroidBackup": true,
           "faceIDPermission": "Allow knitting to access your Face ID biometric data."
         }
-      ] 
-    ],"scheme":"myapp"
+      ],
+      "expo-web-browser",
+      "expo-build-properties"
+    ],
+    "scheme": "myapp"
   }
 }
