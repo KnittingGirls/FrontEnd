@@ -16,6 +16,9 @@
     "@react-navigation/drawer": "^7.1.2",
     "@react-navigation/native": "^7.1.6",
     "@react-navigation/native-stack": "^7.2.1",
+    "@unimodules/core": "^7.1.2",
+    "@unimodules/react-native-adapter": "^6.3.9",
+    "eas-cli": "^16.6.1",
     "expo": "^53.0.9",
     "expo-auth-session": "~6.1.5",
     "expo-build-properties": "~0.14.6",
@@ -39,7 +42,10 @@
     "react-native-unimodules": "^0.14.10",
     "react-native-vector-icons": "^10.2.0",
     "react-native-web": "^0.20.0",
-    "react-navigation": "^5.0.0"
+    "react-navigation": "^5.0.0",
+    "expo-modules-autolinking": "~2.1.0",
+    "@expo/config-plugins": "~10.0.0",
+    "@expo/prebuild-config": "~9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2"
