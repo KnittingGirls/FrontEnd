@@ -18,7 +18,7 @@ export default function ShowPattern({ navigation }) {
                 {/* </View> */}
                 <View style={styles.btnContainer}>
                     <CustomButton title="저장하기" onPress={() => alert("저장이 완료되었습니다!")} />
-                    <CustomButton title="완료" onPress={() => navigation.navigate("Home")} />
+                    <CustomButton title="완료" onPress={() => navigation.replace("Drawer")} />
                 </View>
 
             </ImageBackground>
