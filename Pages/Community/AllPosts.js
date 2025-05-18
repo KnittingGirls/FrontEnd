@@ -9,11 +9,12 @@ import { EXPO_PUBLIC_IPHOST, EXPO_POST_BASE_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import { useAuth } from "../../AuthContext";
 const imageUri = [
-    require("./../../assets/SelectActivity/free-icon-knitting-2780135.png"),
-    require("./../../assets/SelectActivity/free-icon-question-mark-9797431.png")
+    require("./../../assets/postImages/sweater1.jpg"),
+    require("./../../assets/postImages/sweater2.jpg"),
+    require("./../../assets/postImages/sweater3.jpg"),
+    require("./../../assets/postImages/grid1.jpg"),
 ];
 
-const baseUrl = `http://192.168.45.37:8080/posts`;
 export default function AllPosts({ navigation }) {
     // const [token, setToken] = useState();
     // const [nickname, setNickname] = useState('서자영');
@@ -113,7 +114,10 @@ export default function AllPosts({ navigation }) {
                                     style={styles.postImage}
                                 /> */}
                                 {item.imageData>1 ? <Image source={item.imageData} style={styles.postImage}/>
-                                    : <Image source={imageUri[index]} style={styles.postImage}/>} 
+                                    : <View style={styles.imageContainer}>
+                                        <Image source={imageUri[index]} style={styles.postImage} />
+                                        <Image source={imageUri[index+3]} style={styles.postImage} />
+                                    </View>} 
                                 <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
                                 <Text style={{flex:1}}>❤️ {item.likeCount}</Text>
                             </View>
@@ -191,9 +195,17 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end",
         padding: 10,
     },
+    imageContainer: {
+        height: 100, 
+        // flex: 3, 
+        flexDirection:"row"
+    },
     postImage:{
         width: "100",
         height: "100",
+        marginTop: 12,
+        marginBottom: 12,
+        marginRight:4
         // backgroundColor:"red"
     },
 });

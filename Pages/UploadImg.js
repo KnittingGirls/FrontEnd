@@ -3,10 +3,11 @@ import {StyleSheet,Text,View,ImageBackground,Dimensions,TouchableOpacity,Image,}
 import * as ImagePicker from "expo-image-picker";
 import CustomButton from "../components/CustomButton";
 import * as FileSystem from 'expo-file-system';
+import RNFS from 'react-native-fs';
 import * as Sharing from 'expo-sharing';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-import { EXPO_PUBLIC_IPHOST } from "@env";
+import { EXPO_PUBLIC_IPHOST,EXPO_POST_BASE_URL } from "@env";
 
 export default function UploadImg({ navigation }) {
     const sweetHouse = require("../assets/background/sweetHouse_1.png");
@@ -49,7 +50,7 @@ export default function UploadImg({ navigation }) {
             console.log("이미지 업로드 요청 시작");
 
             //서버 IP 주소로 아래 주소 변경 필요 
-            const response = await fetch(`http://192.168.45.18:8080/model-server/predict`, {
+            const response = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/model-server/predict`, {
                 method: "POST",
                 body: formData,
             });
@@ -64,7 +65,7 @@ export default function UploadImg({ navigation }) {
             // alert("업로드 성공: " + result.message);
             console.log(result.pdf_filename);
             setPdfPath(result.pdf_filename);
-            console.log(pdfPath);
+            console.log("pdfPath:"+pdfPath);
             // console.log(result.mask_path);
 
         } catch (error) {
@@ -74,28 +75,47 @@ export default function UploadImg({ navigation }) {
     };
    
     const downloadPDF = async () => {
+        const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
+        const downloadDest = `${RNFS.DownloadDirectoryPath}/${pdfPath}`;
+        const options = {
+            fromUrl: fileUrl,
+            toFile: downloadDest,
+        };
+
         try {
-            const fileUrl =`http://10.240.175.52:8000/pdfs/${pdfPath}`; // 예: http://192.168.0.5:8080/files/sample.pdf
-            // const fileName = pdfPath;
-            const fileUri = FileSystem.documentDirectory + pdfPath;
-
-            // 파일 다운로드
-            const { uri,status } = await FileSystem.downloadAsync(fileUrl, fileUri);
-            console.log('✅ 파일 저장 위치:', uri);
-            if (status != 200) { console.log("문제있다",status); }
-
-            // alert('다운로드 완료', 'PDF 파일이 저장되었습니다.');
-
-            // 파일 공유 또는 열기
-            if (await Sharing.isAvailableAsync()) {
-                await Sharing.shareAsync(uri);
+            const result = await RNFS.downloadFile(options).promise;
+            if (result.statusCode === 200) {
+                Alert.alert('성공', '다운로드 폴더에 저장되었습니다!');
             } else {
-                alert('공유 불가', '이 디바이스에서는 공유 기능을 사용할 수 없습니다.');
+                Alert.alert('실패', `에러 코드: ${result.statusCode}`);
             }
         } catch (error) {
-            console.error('❌ 파일 다운로드 실패:', error);
-            alert('오류', '파일 다운로드 중 오류가 발생했습니다.');
+            console.error(error);
+            Alert.alert('에러', '다운로드 중 문제가 발생했습니다.');
         }
+
+        // try {
+        //     const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
+        //     // const fileName = pdfPath;
+        //     const fileUri = FileSystem.documentDirectory + pdfPath;
+
+        //     // 파일 다운로드
+        //     const { uri,status } = await FileSystem.downloadAsync(fileUrl, fileUri);
+        //     console.log('✅ 파일 저장 위치:', uri);
+        //     if (status != 200) { console.log("문제있다",status); }
+
+        //     // alert('다운로드 완료', 'PDF 파일이 저장되었습니다.');
+
+        //     // 파일 공유 또는 열기
+        //     if (await Sharing.isAvailableAsync()) {
+        //         await Sharing.shareAsync(uri);
+        //     } else {
+        //         alert('공유 불가', '이 디바이스에서는 공유 기능을 사용할 수 없습니다.');
+        //     }
+        // } catch (error) {
+        //     console.error('❌ 파일 다운로드 실패:', error);
+        //     alert('오류', '파일 다운로드 중 오류가 발생했습니다.');
+        // }
     };
     
     return (
@@ -105,7 +125,7 @@ export default function UploadImg({ navigation }) {
                 {pdfPath ?
                     <View style={styles.upload}>
                         {selectedImage && (
-                            <Image source={{ uri: selectedImage.uri }} style={styles.img} />
+                            <Image source={require("./../assets/postImages/grid1.jpg") } style={styles.img} />
                         )}
                         {/* <TouchableOpacity onPress={downloadPDF} style={styles.pickButton}>
                             <Text>pdf 다운로드</Text>

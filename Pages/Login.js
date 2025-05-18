@@ -16,42 +16,50 @@ import { useNavigation } from "@react-navigation/native";
 import { EXPO_PUBLIC_IPHOST } from "@env";
 import React from "react";
 import { useAuth } from "../AuthContext";
+//expo go 에서 redirect uri 딥링크 사용을 위해서 
 
-const REDIRECT_SCHEME = "myapp://Home"; // 앱으로 돌아올 URI
-const BACKEND_LOGIN_URL = `http://10.240.185.27:8080/auth/login`;
+
+const REDIRECT_SCHEME = "myapp://Login"; // 앱으로 돌아올 URI
+const BACKEND_LOGIN_URL = `http://${EXPO_PUBLIC_IPHOST}:8080/auth/login`;
 
 
 export default function Login({ navigation }) {
     const sweetHouse = require("../assets/background/login_1.png");
     const { savetoken } = useAuth();
     useEffect(() => {
-        const handleRedirect = async (event) => {
-            const url = event.url;
-            const tokenParam = Linking.parse(url).queryParams?.token;
-            const id = Linking.parse(url).queryParams?.id;
-            const nicknameParam = Linking.parse(url).queryParams?.nickname;
-            console.log(url);
-            console.log(Linking.parse(url));
-            if (tokenParam) {
-                await SecureStore.setItemAsync("token", tokenParam);
-                await SecureStore.setItemAsync("nickname", nicknameParam);
-            } else {
-                // Alert.alert("로그인 실패", "토큰이 전달되지 않았습니다.");
-                console.log("로그인 실패", "토큰이 전달되지 않았습니다.");
-            }
-        };
-
+        
         const subscription = Linking.addEventListener("url", handleRedirect);
-
-        Linking.getInitialURL().then((url) => {
-            console.log("초기 URL:", url); // <-- 이거 찍어보기
-            if (url) handleRedirect({ url });
+        
+        // Linking.getInitialURL().then((url) => {
+        //     console.log("초기 URL:", url); // <-- 이거 찍어보기
+        //     if (url) handleRedirect({ url });
+        // });
+        Linking.getInitialURL().then(url => {
+            if (url) {
+                handleRedirect({ url });
+            }
         });
-
         return () => {
             subscription.remove();
         };
-    }, []);
+    }, [handleRedirect]);
+    const handleRedirect = async (event) => {
+        // const redirectUri = AuthSession.makeRedirectUri({ useProxy: true, native: `https://auth.expo.io/@ujin5005/frontend2`, });
+        // console.log("🔗 Redirect URI:", redirectUri);
+        const url = event.url;
+        const tokenParam = Linking.parse(url).queryParams?.token;
+        const id = Linking.parse(url).queryParams?.id;
+        const nicknameParam = Linking.parse(url).queryParams?.nickname;
+        console.log(url);
+        console.log(Linking.parse(url));
+        if (tokenParam) {
+            await SecureStore.setItemAsync("token", tokenParam);
+            await SecureStore.setItemAsync("nickname", nicknameParam);
+        } else {
+            // Alert.alert("로그인 실패", "토큰이 전달되지 않았습니다.");
+            console.log("로그인 실패", "토큰이 전달되지 않았습니다.");
+        }
+    };
 
     const openKakaoLogin = async () => {
         const result =await WebBrowser.openAuthSessionAsync(BACKEND_LOGIN_URL, REDIRECT_SCHEME);
@@ -59,11 +67,12 @@ export default function Login({ navigation }) {
         const nickname = SecureStore.getItemAsync("nickname");
         console.log(result.type);
         if (result.type === "success") {
-            savetoken(token,nickname); //await를 안쓰니까 일단 넘어가긴 하는데 이게 그냥 넘어간건지 돼서 넘어간건지 모르겠다..
+            await savetoken(token,nickname); //await를 안쓰니까 일단 넘어가긴 하는데 이게 그냥 넘어간건지 돼서 넘어간건지 모르겠다..
             console.log("저장 완료");//여기까지 못가는 이유가 뭘까..?
             console.log(token);
             result.url.remove();
         }
+        alert("로그인 성공!");
     };
     
     return (
