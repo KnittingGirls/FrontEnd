@@ -34,10 +34,23 @@ export default function NewPost({ navigation }) {
         // console.log("버튼 작동은 함");
         const hashtagsArray = newHashtags.split(',').map(tag => tag.trim());
         const formData = new FormData();
-        formData.append('postDto', JSON.stringify({ content: newPostContent, hashtags: hashtagsArray, imageData: selectedImage }));
-
+        formData.append('postDto', JSON.stringify({ content: newPostContent, hashtags: hashtagsArray }));
+        // formData.append('nickname', nickname);
+        formData.append("images", {
+            uri: selectedImage.uri,
+            type: selectedImage.mimeType, // 또는 적절한 MIME 타입 (예: image/png)
+            name: selectedImage.fileName, // 백엔드에서 요구하는 파일 이름
+        });
+        // formData.append('images', JSON.stringify({file:selectedImage}));
+        // selectedImages.forEach((image, index) => {
+        //     formData.append('images', {
+        //         uri: image.uri,
+        //         type: image.type || 'image/jpeg', // 혹은 image.mimeType
+        //         name: image.fileName || `photo_${index}.jpg`
+        //     });
+        // });
+        console.log(formData);
         try {
-            await fetch(`${EXPO_POST_BASE_URL}?nickname=${nickname}`, {
                 method: 'POST',
                 body: formData,
             });
