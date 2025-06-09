@@ -1,7 +1,7 @@
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, TextInput, StyleSheet,Image } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useAuth } from "../../AuthContext";
@@ -15,17 +15,47 @@ export default function EachPost({ navigation,route }) {
     const [editHashtags, setEditHashtags] = useState("");
     const [commentText, setCommentText] = useState({});
     const { token, nickname, isLoading } = useAuth(); 
+    const [loading, setLoading] = useState(true);
+    const [images, setImages] = useState();
+
     const postId = route.params.postId;
     const IconSize = 20;
+    const convertBlobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result.split(',')[1]); // get base64 string only
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+      };
     const fetchPosts = async () => {
         try {
-            const response = await fetch(`${EXPO_POST_BASE_URL}/${postId}`); //이 주소가 맞는지 확인 필요함
+            const response = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/${postId}`); //이 주소가 맞는지 확인 필요함
             const data = await response.json();
             // const replyres = await fetch(`${baseUrl}/${postId}/comment`); 
             // const replydata = await replyres.json();
             setPosts(data);
             console.log(data);
-            // setReplies(replydata);
+            try {
+                const fetchedImages = await Promise.all(
+                    data.images.map(async (url) => {
+                        const response = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080${url}`);
+                        
+                        const blob = await response.blob();
+                        // console.log(blob);
+                        // Convert blob to base64
+                        const base64 = await convertBlobToBase64(blob);
+                        return `data:${blob.type};base64,${base64}`;
+                    })
+                );
+                // console.log(fetchedImages[1]);
+                setImages(fetchedImages);
+                // console.log(images[0]);
+            } catch (error) {
+                console.error('Error fetching images:', error);
+            } finally {
+                setLoading(false);
+            }
         } catch (error) {
             console.error('게시글 조회 에러:', error);
         }
@@ -33,7 +63,7 @@ export default function EachPost({ navigation,route }) {
     // 게시글 수정
     const updatePost = async (postId) => {
         try {
-            await fetch(`${EXPO_POST_BASE_URL}/${postId}?nickname=${nickname}`, {
+            await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/${postId}?nickname=${nickname}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -51,7 +81,7 @@ export default function EachPost({ navigation,route }) {
     // 게시글 삭제
     const deletePost = async (postId) => {
         try {
-            await fetch(`${EXPO_POST_BASE_URL}/${postId}?nickname=${nickname}`, {
+            await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/${postId}?nickname=${nickname}`, {
                 method: 'DELETE',
             });
             fetchPosts();
@@ -64,7 +94,7 @@ export default function EachPost({ navigation,route }) {
     // 게시글 좋아요
     const likePost = async (postId) => {
         try {
-            await fetch(`${EXPO_POST_BASE_URL}/${postId}/like?nickname=${nickname}`, { method: 'POST' });
+            await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/${postId}/like?nickname=${nickname}`, { method: 'POST' });
             fetchPosts();
         } catch (error) {
             console.error('좋아요 에러:', error);
@@ -74,7 +104,7 @@ export default function EachPost({ navigation,route }) {
     // 게시글 북마크
     const bookmarkPost = async (postId) => {
         try {
-            await fetch(`${EXPO_POST_BASE_URL}/${postId}/bookmark?nickname=${nickname}`, { method: 'POST' });
+            await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/${postId}/bookmark?nickname=${nickname}`, { method: 'POST' });
             fetchPosts();
         } catch (error) {
             console.error('북마크 에러:', error);
@@ -84,7 +114,7 @@ export default function EachPost({ navigation,route }) {
     // 북마크 목록 조회
     const fetchBookmarks = async () => {
         try {
-            const response = await fetch(`${EXPO_POST_BASE_URL}/bookmarks?nickname=${nickname}`);
+            const response = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/bookmarks?nickname=${nickname}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -98,7 +128,7 @@ export default function EachPost({ navigation,route }) {
             const encodedContent = encodeURIComponent(commentText[postId]);
             const encodedNickname = encodeURIComponent(nickname);
 
-            const response = await fetch(`${EXPO_POST_BASE_URL}/${postId}/comment?nickname=${encodedNickname}&content=${encodedContent}`, {
+            const response = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/${postId}/comment?nickname=${encodedNickname}&content=${encodedContent}`, {
                 method: 'POST',
             });
 
@@ -155,6 +185,13 @@ export default function EachPost({ navigation,route }) {
                         <Text style={styles.postContent}>
                             {posts.content}
                         </Text>
+                        {images && !loading ?
+                            <View style={styles.imageContainer}>
+                                {images.map((uri, index) => (
+                                    <Image key={index} source={{uri:uri}} style={styles.postImage} />
+                                ))} 
+                            </View>
+                            : <></>}
                         <Text style={styles.hashtags}>
                             {posts.hashtags?.join(' ')}
                         </Text>
@@ -257,13 +294,26 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         Width: 60,
     },
+    imageContainer: {
+        height: 100,
+        // flex: 3, 
+        flexDirection: "row"
+    },
+    postImage: {
+        width: "100",
+        height: "100",
+        marginTop: 12,
+        marginBottom: 12,
+        marginRight: 4
+        // backgroundColor:"red"
+    },
     buttonText: { color: 'black', fontWeight: 'bold' },
     postContainer: {
         // borderWidth: 1,
         backgroundColor:"white",
         padding: 10,
         marginVertical: 5,
-        minHeight: 200,
+        minHeight: 250,
         justifyContent:"space-between"
     },
     commentAuthor: {
