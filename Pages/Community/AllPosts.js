@@ -18,7 +18,7 @@ const imageUri = [
 export default function AllPosts({ navigation }) {
     // const [token, setToken] = useState();
     // const [nickname, setNickname] = useState('서자영');
-
+    const [loading, setLoading] = useState(true);
     const [posts, setPosts] = useState([]);
     const [newPostContent, setNewPostContent] = useState("");
     const [newHashtags, setNewHashtags] = useState("");
@@ -29,22 +29,69 @@ export default function AllPosts({ navigation }) {
     const [editHashtags, setEditHashtags] = useState("");
     const { token, nickname, isLoading } = useAuth(); 
     const [showBookmark, setShowBookmark] = useState(false);
+    const [images, setImages] = useState([{}]);
+    const [postWImage, setPostWImage]=useState([]);
+    const convertBlobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result.split(',')[1]); // get base64 string only
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    };
+
     // 전체 게시글 조회
     const fetchPosts = async () => {
         try {
             const response = await fetch(EXPO_POST_BASE_URL);
             const data = await response.json();
             setPosts(data);
-            setShowBookmark(false);
+            setShowBookmark(false);         
         } catch (error) {
             console.error('게시글 조회 에러:', error);
-        }
+        } 
     };
 
+    useEffect(() => {
+        const fetchAllImages = async () => {
+            try {
+                const allPosts = await Promise.all(
+                    posts.map(async (post) => {
+                        const processedImages = await Promise.all(
+                            post.images.map(async (url) => {
+                                try {
+                                    const res = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080${url}`);
+
+                                    const blob = await res.blob();
+                                    const base64 = await convertBlobToBase64(blob);
+                                    return `data:${blob.type};base64,${base64}`;
+                                } catch (e) {
+                                    console.error(`Error fetching image at ${url}:`, e);
+                                    return null;
+                                }
+                            })
+                        );
+                        return {
+                            ...post,
+                            processedImages: processedImages.filter(Boolean), // null 제거
+                        };
+                    })
+                );
+
+                setPostWImage(allPosts);
+            } catch (err) {
+                console.error('Error fetching all images:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAllImages();
+    }, [posts]);
     // 해시태그 검색
     const searchByHashtag = async () => {
         try {
-            const response = await fetch(`${EXPO_POST_BASE_URL}/search?tag=${encodeURIComponent(searchTag)}`);
+            const response = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/search?tag=${encodeURIComponent(searchTag)}`);
             const data = await response.json();
             setPosts(data);
         } catch (error) {
@@ -99,32 +146,32 @@ export default function AllPosts({ navigation }) {
             
 
             {/* 게시글 목록 */}
-            <View style={styles.postContainer}>
+            {!loading? <View style={styles.postContainer}>
                 <FlatList
-                    data={posts}
-                    keyExtractor={(item, index) => index.toString()}
+                    data={postWImage}
+                    // keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item,index }) => (
                         <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.replace("EachPost", {postId:item.id}) }}>
                             <Text style={{marginBottom:10, fontWeight:"bold",fontSize:15}}>{item.authorNickname}</Text>
                             {/* <Image source={item.imageData} style={{ flex: 2,backgroundColor:"gray",width:"auto"}} /> */}
                             <View style={{flex:1}}>
                                 <Text style={styles.postContent}>{item.content}</Text>
-                                {/* <Image
-                                    source={imageUri[1] }
-                                    style={styles.postImage}
-                                /> */}
-                                {item.imageData>1 ? <Image source={item.imageData} style={styles.postImage}/>
-                                    : <View style={styles.imageContainer}>
-                                        <Image source={imageUri[index]} style={styles.postImage} />
-                                        <Image source={imageUri[index+3]} style={styles.postImage} />
-                                    </View>} 
+                                {console.log("d" + index)}
+                                {/* {console.log(images)} */}
+                                {item.processedImages?.length>0?
+                                    <View style={styles.imageContainer}>
+                                        {item.processedImages.map((uri, idx) => (
+                                            <Image key={idx} source={{uri:uri}} style={styles.postImage} />
+                                        ))} 
+                                    </View>
+                                : <></>}
                                 <Text style={styles.hashtags}>{item.hashtags?.join(' ')}</Text>
                                 <Text style={{flex:1}}>❤️ {item.likeCount}</Text>
                             </View>
                         </TouchableOpacity>
                     )}
                 />
-            </View>
+            </View> : <></>}
             {/* 북마크 목록 */}
             <View style={styles.btnContainer}>
                 <TouchableOpacity style={styles.button} onPress={() => { if (showBookmark) { fetchPosts()}else {fetchBookmarks()}}}>
