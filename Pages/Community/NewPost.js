@@ -11,7 +11,7 @@ export default function NewPost({ navigation }) {
     const [posts, setPosts] = useState([]);
     const [newPostContent, setNewPostContent] = useState("");
     const [newHashtags, setNewHashtags] = useState("");
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedImage, setSelectedImage] = useState([]);
     const { token, nickname, isLoading } = useAuth(); 
     
     // 이미지 선택 함수
@@ -23,7 +23,8 @@ export default function NewPost({ navigation }) {
         });
         // console.log(result);
         if (!result.canceled && result.assets[0].uri) {
-            setSelectedImage(result.assets[0]); // 선택한 이미지의 정보 저장
+            setSelectedImage([...selectedImage, result.assets[0]]);
+            console.log(selectedImage);
         } else {
             console.log("이미지를 선택하지 않았습니다.");
         }
@@ -35,22 +36,16 @@ export default function NewPost({ navigation }) {
         const hashtagsArray = newHashtags.split(',').map(tag => tag.trim());
         const formData = new FormData();
         formData.append('postDto', JSON.stringify({ content: newPostContent, hashtags: hashtagsArray }));
-        // formData.append('nickname', nickname);
-        formData.append("images", {
-            uri: selectedImage.uri,
-            type: selectedImage.mimeType, // 또는 적절한 MIME 타입 (예: image/png)
-            name: selectedImage.fileName, // 백엔드에서 요구하는 파일 이름
+        selectedImage.forEach((image, index) => {
+            formData.append('images', {
+                uri: image.uri,
+                type: image.mimeType,
+                name: image.fileName 
+            });
         });
-        // formData.append('images', JSON.stringify({file:selectedImage}));
-        // selectedImages.forEach((image, index) => {
-        //     formData.append('images', {
-        //         uri: image.uri,
-        //         type: image.type || 'image/jpeg', // 혹은 image.mimeType
-        //         name: image.fileName || `photo_${index}.jpg`
-        //     });
-        // });
         console.log(formData);
         try {
+            await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts?nickname=${nickname}`, {
                 method: 'POST',
                 body: formData,
             });
@@ -80,10 +75,12 @@ export default function NewPost({ navigation }) {
                     multiline={true}
                 />
                 <View style={styles.imageUpload}>
-                    {selectedImage && (
+                    {/* {selectedImage && (
                         <Image source={{ uri: selectedImage.uri }} style={styles.img} />
-                    )}
-                    
+                    )} */}
+                    {selectedImage && selectedImage.map((item, index) => (
+                        <Image key={index} source={{ uri: item.uri }} style={styles.img} />
+                    ))} 
                 </View>
                 <View style={{flex:1}}>
                     <TouchableOpacity onPress={pickImage} style={styles.button}>
@@ -110,7 +107,11 @@ const styles = StyleSheet.create({
     postContainer: { borderWidth: 1, padding: 10, marginVertical: 5 },
     postContent: { fontSize: 18 },
     hashtags: { color: 'gray' },
-    imageUpload: { flex: 1 },
+    imageUpload: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+     },
     img: {
         width: 120,
         height: 120,
