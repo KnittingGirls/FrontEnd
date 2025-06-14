@@ -42,7 +42,17 @@
         }
       ],
       "expo-web-browser",
-      "expo-build-properties"
+      ["expo-build-properties",
+        {
+          "android": {
+            "gradleCommand": ":app:assembleRelease",
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 33,
+            "buildToolsVersion": "33.0.0",
+            "kotlinVersion": "1.8.0"
+          }
+        }
+      ]
     ],
     "scheme": "myapp"
   }
