@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import {StyleSheet,Text,View,ImageBackground,Dimensions,TouchableOpacity,Image,} from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import CustomButton from "../components/CustomButton";
-import * as FileSystem from 'expo-file-system';
 import RNFS from 'react-native-fs';
-import * as Sharing from 'expo-sharing';
+// import { RNCamera } from 'react-native-camera';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import { EXPO_PUBLIC_IPHOST,EXPO_POST_BASE_URL } from "@env";
