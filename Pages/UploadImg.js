@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import {StyleSheet,Text,View,ImageBackground,Dimensions,TouchableOpacity,Image,} from "react-native";
-import * as ImagePicker from "expo-image-picker";
 import CustomButton from "../components/CustomButton";
 import * as FileSystem from 'expo-file-system';
-import RNFS from 'react-native-fs';
-import * as Sharing from 'expo-sharing';
+import * as ImagePicker from 'expo-image-picker';
+// import RNFS from 'react-native-fs';
+
+// import { RNCamera } from 'react-native-camera';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 import { EXPO_PUBLIC_IPHOST,EXPO_POST_BASE_URL } from "@env";
@@ -73,26 +74,48 @@ export default function UploadImg({ navigation }) {
             alert("이미지 업로드 실패");
         }
     };
-   
     const downloadPDF = async () => {
-        const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
-        const downloadDest = `${RNFS.DownloadDirectoryPath}/${pdfPath}`;
-        const options = {
-            fromUrl: fileUrl,
-            toFile: downloadDest,
-        };
-
         try {
-            const result = await RNFS.downloadFile(options).promise;
-            if (result.statusCode === 200) {
-                Alert.alert('성공', '다운로드 폴더에 저장되었습니다!');
-            } else {
-                Alert.alert('실패', `에러 코드: ${result.statusCode}`);
-            }
+        const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
+          const fileName = pdfPath;
+          const fileUri = FileSystem.documentDirectory + fileName;
+    
+          // 파일 다운로드
+          const { uri } = await FileSystem.downloadAsync(fileUrl, fileUri);
+          console.log('✅ 파일 저장 위치:', uri);
+    
+          Alert.alert('다운로드 완료', 'PDF 파일이 저장되었습니다.');
+    
+          // 파일 공유 또는 열기
+          if (await Sharing.isAvailableAsync()) {
+            await Sharing.shareAsync(uri);
+          } else {
+            Alert.alert('공유 불가', '이 디바이스에서는 공유 기능을 사용할 수 없습니다.');
+          }
         } catch (error) {
-            console.error(error);
-            Alert.alert('에러', '다운로드 중 문제가 발생했습니다.');
+          console.error('❌ 파일 다운로드 실패:', error);
+          Alert.alert('오류', '파일 다운로드 중 오류가 발생했습니다.');
         }
+    //   };
+    // const downloadPDF = async () => {
+    //     const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
+    //     const downloadDest = `${RNFS.DownloadDirectoryPath}/${pdfPath}`;
+    //     const options = {
+    //         fromUrl: fileUrl,
+    //         toFile: downloadDest,
+    //     };
+
+    //     try {
+    //         const result = await RNFS.downloadFile(options).promise;
+    //         if (result.statusCode === 200) {
+    //             Alert.alert('성공', '다운로드 폴더에 저장되었습니다!');
+    //         } else {
+    //             Alert.alert('실패', `에러 코드: ${result.statusCode}`);
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         Alert.alert('에러', '다운로드 중 문제가 발생했습니다.');
+    //     }
 
         // try {
         //     const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;

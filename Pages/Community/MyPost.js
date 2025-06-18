@@ -10,7 +10,7 @@ import { EXPO_PUBLIC_IPHOST, EXPO_POST_BASE_URL } from "@env";
 export default function MyPost({ navigation}) {
     const [myposts, setMyPosts] = useState([]);
     const [posts, setPosts] = useState([]);
-    const { token, nickname, isLoading } = useAuth(); 
+    const { token, nickname,userId, isLoading } = useAuth(); 
 
     // 내가 쓴 게시물 조회
     const fetchmyPosts = async () => {

@@ -16,8 +16,6 @@ const imageUri = [
 ];
 
 export default function AllPosts({ navigation }) {
-    // const [token, setToken] = useState();
-    // const [nickname, setNickname] = useState('서자영');
     const [loading, setLoading] = useState(true);
     const [posts, setPosts] = useState([]);
     const [newPostContent, setNewPostContent] = useState("");
@@ -27,7 +25,7 @@ export default function AllPosts({ navigation }) {
     const [editingPost, setEditingPost] = useState(null);
     const [editContent, setEditContent] = useState("");
     const [editHashtags, setEditHashtags] = useState("");
-    const { token, nickname, isLoading } = useAuth(); 
+    const { token, nickname, userId, isLoading } = useAuth(); 
     const [showBookmark, setShowBookmark] = useState(false);
     const [images, setImages] = useState([{}]);
     const [postWImage, setPostWImage]=useState([]);

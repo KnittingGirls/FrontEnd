@@ -1,59 +1,30 @@
 {
   "expo": {
-    "name": "frontend2",
-    "slug": "frontend2",
+    "name": "털실과 그레텔",
+    "slug": "frontend33",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.ujin5005.frontend",
-      "permissions": [
-        "READ_MEDIA_IMAGES"
-      ]
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "4c0de765-52cf-420c-b815-2711bde62a81"
+      "package": "com.anonymous.frontend33",
+      "intentFilters": [
+      {
+        "action": "VIEW",
+        "data": {
+          "scheme": "frontend33",
+          "host": "expo-development-client"
+        },
+        "category": ["BROWSABLE", "DEFAULT"]
       }
+    ]
     },
     "plugins": [
-      [
-        "expo-secure-store",
-        {
-          "configureAndroidBackup": true,
-          "faceIDPermission": "Allow knitting to access your Face ID biometric data."
-        }
-      ],
-      "expo-web-browser",
-      ["expo-build-properties",
-        {
-          "android": {
-            "gradleCommand": ":app:assembleRelease",
-            "compileSdkVersion": 33,
-            "targetSdkVersion": 33,
-            "buildToolsVersion": "33.0.0",
-            "kotlinVersion": "1.8.0"
-          }
-        }
-      ]
+      "expo-dev-client",
+      "expo-secure-store",
+      "expo-web-browser"
     ],
-    "scheme": "myapp"
+    "scheme": "frontend33",
+    "deepLinks": ["frontend33://"],
+    "ios": {
+      "bundleIdentifier": "com.anonymous.frontend33"
+    }
   }
 }

@@ -11,14 +11,14 @@ export default function SelectActivity({ navigation }) {
                 <View style={{ flex: 2}}></View>
                 <View style={styles.vertical}>
                     <View style={styles.horizon}>
-                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("NewPattern")} >
+                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("SelectType")} >
                             <Text style={styles.num}>01</Text>
                             <Image source={require('../assets/SelectActivity/free-icon-knitting-2780135.png')}
                                 style={styles.img}
                             />
                             <Text style={styles.title}>도안 생성</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("UploadImg")}>
+                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.navigate("AllPosts")}>
                             <Text style={styles.num}>02</Text>
                             <Image source={require('../assets/SelectActivity/free-icon-two-people-9426855.png')}
                                 style={styles.img}
