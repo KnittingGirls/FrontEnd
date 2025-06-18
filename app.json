@@ -4,10 +4,27 @@
     "slug": "frontend33",
     "version": "1.0.0",
     "android": {
-      "package": "com.anonymous.frontend33"
+      "package": "com.anonymous.frontend33",
+      "intentFilters": [
+      {
+        "action": "VIEW",
+        "data": {
+          "scheme": "frontend33",
+          "host": "expo-development-client"
+        },
+        "category": ["BROWSABLE", "DEFAULT"]
+      }
+    ]
     },
     "plugins": [
-      "expo-secure-store"
-    ]
+      "expo-dev-client",
+      "expo-secure-store",
+      "expo-web-browser"
+    ],
+    "scheme": "frontend33",
+    "deepLinks": ["frontend33://"],
+    "ios": {
+      "bundleIdentifier": "com.anonymous.frontend33"
+    }
   }
 }
