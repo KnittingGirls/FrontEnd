@@ -12,7 +12,7 @@ export default function NewPost({ navigation }) {
     const [newPostContent, setNewPostContent] = useState("");
     const [newHashtags, setNewHashtags] = useState("");
     const [selectedImage, setSelectedImage] = useState([]);
-    const { token, nickname, isLoading } = useAuth(); 
+    const { token, nickname, userId, isLoading } = useAuth(); 
     
     // 이미지 선택 함수
     const pickImage = async () => {

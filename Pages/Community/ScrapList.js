@@ -9,7 +9,7 @@ import { EXPO_PUBLIC_IPHOST, EXPO_POST_BASE_URL } from "@env";
 
 export default function ScrapList({ navigation}) {
     const [posts, setPosts] = useState([]);
-    const { token, nickname, isLoading } = useAuth(); 
+    const { token, nickname, userId, isLoading } = useAuth(); 
 
     // 북마크 목록 조회
     const fetchBookmarks = async () => {

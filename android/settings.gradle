@@ -31,7 +31,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
 }
 expoAutolinking.useExpoModules()
 
-rootProject.name = 'frontend33'
+rootProject.name = '털실과 그레텔'
 
 expoAutolinking.useExpoVersionCatalog()
 

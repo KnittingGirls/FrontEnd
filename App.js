@@ -10,6 +10,7 @@ import ShowPattern from './Pages/ShowPattern';
 import AdditionalInfo from './Pages/AdditionalInfo';
 import SelectActivity from './Pages/SelectActivity';
 import Login from './Pages/Login';
+import Logout from './Pages/Logout';
 import { createDrawerNavigator, DrawerToggleButton, DrawerActions } from '@react-navigation/drawer';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import Community from './Pages/Community';
@@ -20,7 +21,7 @@ import EachPost from './Pages/Community/EachPost';
 import NewPost from './Pages/Community/NewPost';
 import MyPost from './Pages/Community/MyPost';
 import ScrapList from './Pages/Community/ScrapList';
-
+import { ImageBackground } from "react-native";
 import { Platform } from "react-native";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -42,32 +43,24 @@ const options = {
     borderRadius:9,
   }
 }
-
-const MenuButton = ({ navigation }) => {
-  // const navigation = useNavigation();
-  const { token, nickname, isLoading } = useAuth(); 
-  return (
-    <TouchableOpacity onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} style={{ width: 30, height: 30 }}>
-      <Image source={require('./assets/menu_navigation.png')} />
-    </TouchableOpacity>
-  );
-}
+const loadingImage = require('./assets/background/loading_img.png');
 const DrawerNavigator = () => {
-  const [token, setToken] = useState();
-  useEffect(() => {
-    const fetchToken = async () => {
-      const storedToken = SecureStore.getItemAsync("token");
-      console.log("🔑 불러온 토큰:", storedToken);
-      if (storedToken) {
-        setToken(storedToken);
-      }
-    };
-    fetchToken();
-  }, []);
+  const { token, nickname, isLoading } = useAuth(); 
+  // const [token, setToken] = useState();
+  // useEffect(() => {
+  //   const fetchToken = async () => {
+  //     const storedToken = SecureStore.getItemAsync("token");
+  //     console.log("🔑 불러온 토큰:", storedToken);
+  //     if (storedToken) {
+  //       setToken(storedToken);
+  //     }
+  //   };
+  //   fetchToken();
+  // }, []);
   return (
     <Drawer.Navigator
       drawerType="front"
-      initialRouteName="Home"
+      initialRouteName={!token?"Home":"NewPattern"}
       backBehavior='history'
       screenOptions={{
         drawerPosition: 'right',
@@ -81,9 +74,12 @@ const DrawerNavigator = () => {
         headerRight: () => <DrawerToggleButton />,
       }}
     >
-    <Drawer.Screen name="Home" component={Home} options={{ ...options, drawerLabel: "홈화면" }} />
-    {!token && 
-        (<Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} />)}
+    <Drawer.Screen name="Home" component={Home} options={{ ...options, drawerLabel: "홈화면"}}  />
+    {!token?
+        (<Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} />)
+        :
+        (<Drawer.Screen name="Logout" component={Logout} options={{ ...options, drawerLabel: "로그아웃" }} />)
+    }
     {/* <Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} /> */}
     {/* {!token ? <Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} /> : <Drawer.Screen name="Home" component={Home} options={{ ...options, drawerLabel: "홈화면" }} />} */}
     <Drawer.Screen name="NewPattern" component={NewPattern} options={{ ...options, drawerLabel: "도안 생성" }} />
@@ -96,20 +92,10 @@ const DrawerNavigator = () => {
 const AppNavigator = () => {
   // const [token, setToken] = useState();
   const { token, nickname, isLoading } = useAuth();
-  // useEffect(() => {
-  //     const fetchToken = async () => {
-  //     const storedToken = SecureStore.getItemAsync("token");
-  //     console.log("🔑 불러온 토큰:", storedToken);
-  //     if (storedToken) {
-  //       setToken(storedToken);
-  //     }
-  //   };
-  //   fetchToken();
-  // }, []);
   if (isLoading) {
     return(
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>ss</Text>
+        <ImageBackground source={loadingImage} resizeMode="cover" style={styles.image} resizeMethod='auto'/>
       </View>
     );
   }
@@ -120,15 +106,37 @@ const AppNavigator = () => {
   
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false, presentation: 'card', detachPreviousScreen: false }} />
-    <Stack.Screen name="SelectType" component={SelectType} options={{ title: "", presentation: 'card', detachPreviousScreen: false }} />
-    <Stack.Screen name="UploadImg" component={UploadImg} options={{ title: "", presentation: 'card', detachPreviousScreen: false }} />
-    <Stack.Screen name="SelectActivity" component={SelectActivity} options={{ title: "" }} />
-    <Stack.Screen name="ShowPattern" component={ShowPattern} options={{ title: "" }} />
-    <Stack.Screen name="AdditionalInfo" component={AdditionalInfo} options={{ title: "" }} />
-    <Stack.Screen name="EachPost" component={EachPost} options={{ title: "" }} />
-    <Stack.Screen name="NewPost" component={NewPost} options={{ title: "" }} />
-    <Stack.Screen name="AllPosts" component={AllPosts} options={{ title: "" }} />
+      <Stack.Screen name="Drawer" component={DrawerNavigator} options={{ headerShown: false}} />
+      <Stack.Screen name="Home" component={Home} options={{ title: "" }} />
+      <Stack.Screen name="Login" component={Login} options={{ title: "" }} />
+      <Stack.Screen name="Logout" component={Logout} options={{ title: "" }} />
+      <Stack.Screen name="SelectType" component={SelectType} options={{ title: "" }} />
+      <Stack.Screen name="UploadImg" component={UploadImg} options={{ title: ""}} />
+      <Stack.Screen name="SelectActivity" component={SelectActivity} options={{ title: "" }} />
+      <Stack.Screen name="ShowPattern" component={ShowPattern} options={{ title: "" }} />
+      <Stack.Screen name="AdditionalInfo" component={AdditionalInfo} options={{ title: "" }} />
+      <Stack.Screen name="NewPattern" component={NewPattern} options={{title: "" }} />
+      <Stack.Screen name="EachPost" component={EachPost} options= {
+      ({ navigation }) => ({
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={{ marginLeft: 10 }}>◀</Text>
+          </TouchableOpacity>
+        ),
+        title: '',
+      })
+    } />
+      <Stack.Screen name="NewPost" component={NewPost} options={{ title: "" }} />
+      <Stack.Screen name="AllPosts" component={AllPosts} options= {
+      ({ navigation }) => ({
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={{ marginLeft: 10 }}>◀</Text>
+          </TouchableOpacity>
+        ),
+        title: '',
+      })
+    } />
     </Stack.Navigator>
   )
 };
@@ -145,3 +153,21 @@ export default function App() {
   </SafeAreaView >
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+      flex:1,
+      width: SCREEN_WIDTH,
+      height: "100%",
+  },
+  image: {
+      width: SCREEN_WIDTH,
+      height: '100%',
+      // justifyContent: 'center',
+      flexDirection:'column'
+  },
+  btnContainer: {
+      flex:1,
+      marginLeft:'17%',
+  }
+});

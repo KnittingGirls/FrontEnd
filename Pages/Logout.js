@@ -20,7 +20,7 @@ const sweetHouse = require("../assets/background/login_1.png");
 const BACKEND_LOGIN_URL = `http://${EXPO_PUBLIC_IPHOST}:8080/auth/login`;
 const BACKEND_LOGOUT_URL = `http://${EXPO_PUBLIC_IPHOST}:8080/auth/logout`;
 
-export default function Login({ navigation }) {
+export default function Logout({ navigation }) {
     const { savetoken, loadToken, deleteToken, isLoading ,token,nickname,userId} = useAuth();
     const [loginUrl, setLoginUrl] = useState("");
     const webViewRef = useRef(null);
@@ -38,12 +38,10 @@ export default function Login({ navigation }) {
             Alert.alert("로그인이 완료되었습니다");
 
             // 로그인 성공 후 앱의 홈 등으로 이동
-            setTimeout(() => {
-                navigation.reset({
-                index: 0,
-                routes: [{ name: 'Drawer' }],
+            navigation.reset({
+            index: 0,
+            routes: [{ name: 'NewPattern' }],
             });
-            }, 100);
         }
         };
 
@@ -86,7 +84,7 @@ export default function Login({ navigation }) {
                 method: "GET",
                 credentials: "omit", // 쿠키 안 보냄!
             });
-            // console.log("response: ",response);
+            console.log("response: ",response);
             setLoginUrl(response.url);
             console.log("카카오 로그인 URL:", loginUrl);
 
@@ -96,7 +94,7 @@ export default function Login({ navigation }) {
         
         
     };
-    const logout = async () => {
+    const kakaoLogout = async () => {
         const response = await fetch(BACKEND_LOGOUT_URL);
         console.log("response: ",response);
         deleteToken();
@@ -127,7 +125,7 @@ export default function Login({ navigation }) {
                 <ImageBackground source={sweetHouse} resizeMode="cover" style={styles.image}>
                     <View style={{ flex: 12 }} />
                     <View style={styles.btnContainer}>
-                        <BigCustomBtn title="카카오 로그인" onPress={openKakaoLogin} />
+                        <BigCustomBtn title="로그아웃" onPress={kakaoLogout} />
                     </View>
                 </ImageBackground>
             

@@ -14,12 +14,17 @@ export default function EachPost({ navigation,route }) {
     const [editContent, setEditContent] = useState("");
     const [editHashtags, setEditHashtags] = useState("");
     const [commentText, setCommentText] = useState({});
-    const { token, nickname, isLoading } = useAuth(); 
+    const { token, nickname, userId, isLoading } = useAuth(); 
+    // const nickname = "송태섭";
     const [loading, setLoading] = useState(true);
     const [images, setImages] = useState();
 
     const postId = route.params.postId;
     const IconSize = 20;
+
+    const [bookmarked, setBookmarked] = useState(false);
+    const [liked, setLiked] = useState(false);
+
     const convertBlobToBase64 = (blob) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -51,6 +56,11 @@ export default function EachPost({ navigation,route }) {
                 // console.log(fetchedImages[1]);
                 setImages(fetchedImages);
                 // console.log(images[0]);
+                setBookmarked(data.bookmarkedUsers.some(user => user.id == userId));
+                // const foundUser = data.bookmarkedUsers.some(user => user.id == userId);
+                console.log("bookmarked: ",bookmarked);
+                setLiked(data.likedUsers.some(user => user.id == userId));
+                console.log("liked: ",liked);
             } catch (error) {
                 console.error('Error fetching images:', error);
             } finally {
@@ -86,15 +96,25 @@ export default function EachPost({ navigation,route }) {
             });
             fetchPosts();
             navigation.replace('AllPosts');
+            return;
         } catch (error) {
             console.error('게시글 삭제 에러:', error);
         }
+        Alert.alert("작성자가 아닙니다");
     };
 
     // 게시글 좋아요
     const likePost = async (postId) => {
         try {
             await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/${postId}/like?nickname=${nickname}`, { method: 'POST' });
+            // await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/posts/${postId}?nickname=${posts.authorNickname}`, {
+            //     method: 'PUT',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({
+            //         content: editContent,
+            //         hashtags: editHashtags.split(',').map(tag => tag.trim())
+            //     })
+            // });
             fetchPosts();
         } catch (error) {
             console.error('좋아요 에러:', error);
@@ -138,7 +158,7 @@ export default function EachPost({ navigation,route }) {
 
             setCommentText((prev) => ({ ...prev, [postId]: "" }));
         } catch (error) {
-            console.error("댓글 작성 에러:", error);
+            console.error("댓글 작성 에러:", error, nickname);
         }
     };
 
@@ -199,18 +219,19 @@ export default function EachPost({ navigation,route }) {
                     <View style={styles.btnContainer}>
                         {/* 좋아요 */}
                         <TouchableOpacity style={styles.button} onPress={() => likePost(posts.id)}>
-                            <AntDesign name={'heart'} size={IconSize} color={"red"} /> 
+                            {liked?<AntDesign name={'heart'} size={IconSize} color={"red"} /> : 
+                            <AntDesign name={'hearto'} size={IconSize} color={"red"} />} 
                             <Text>{posts.likeCount}</Text>
-                            {/* 만일 눌렀다면 아래로 기본은 빈 하트로 */}
-                            {/* <AntDesign name={'heart'} size={25} color={"red"} /> */}
                         </TouchableOpacity>
 
                         {/* 북마크 */}
                         <TouchableOpacity style={styles.button} onPress={() => bookmarkPost(posts.id)}>
-                            <FontAwesome name={'bookmark'} size={IconSize} color={"black"} />    
+                            {bookmarked?<FontAwesome name={'bookmark'} size={IconSize} color={"black"} /> 
+                            : <FontAwesome name={'bookmark-o'} size={IconSize} color={"black"} />}    
                         </TouchableOpacity>
 
                         {/* 수정 */}
+                        {posts.authorNickname==nickname?
                         <TouchableOpacity
                             style={styles.button}
                             onPress={() => {
@@ -220,12 +241,13 @@ export default function EachPost({ navigation,route }) {
                             }}
                         >
                             <AntDesign name={'edit'} size={IconSize} color={"black"} />    
-                        </TouchableOpacity>
+                        </TouchableOpacity>:<></>}
 
                         {/* 삭제 버튼 */}
-                        <TouchableOpacity style={styles.button} onPress={()=>{if(posts.authorNickname==nickname){deletePost(posts.id)}}}>
+                        {posts.authorNickname==nickname?<TouchableOpacity style={styles.button} onPress={()=>{if(posts.authorNickname==nickname){deletePost(posts.id)}}}>
                             <AntDesign name={'delete'} size={IconSize} color={"black"} />
-                        </TouchableOpacity>
+                        </TouchableOpacity>:
+                        <></>}
                     </View>
                     <View style={styles.replyContainer}>
                         {posts.comments && posts.comments.length > 0 && (
