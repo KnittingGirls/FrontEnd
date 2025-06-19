@@ -11,7 +11,7 @@ export default function SelectType({ navigation}) {
                 <View style={{ flex: 4 }}></View>
                 <View style={ styles.vertical}>
                     <View style={styles.horizon}>
-                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.replace("UploadImg")} >
+                        <TouchableOpacity style={styles.eachItem} onPress={() => navigation.push("UploadImg")} >
                             <Text style={styles.num}>01</Text>
                             <Image source={require('../assets/SelectType/free-icon-christmas-sweater-2300218.png')}
                                 style={styles.img}

@@ -110,31 +110,48 @@ const AppNavigator = () => {
       <Stack.Screen name="Home" component={Home} options={{ title: "" }} />
       <Stack.Screen name="Login" component={Login} options={{ title: "" }} />
       <Stack.Screen name="Logout" component={Logout} options={{ title: "" }} />
-      <Stack.Screen name="SelectType" component={SelectType} options={{ title: "" }} />
-      <Stack.Screen name="UploadImg" component={UploadImg} options={{ title: ""}} />
+      <Stack.Screen name="SelectType" component={SelectType} options={({ navigation }) => ({
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Image source={require('./assets/backBtn.svg')}/>
+          </TouchableOpacity>
+        ),
+        title: '',
+      })} />
+      <Stack.Screen name="UploadImg" component={UploadImg} options={({ navigation }) => ({
+        headerLeft: () => (
+          <TouchableOpacity onPress={() => navigation.replace("SelectType")}>
+            <Image source={require('./assets/backBtn.svg')}/>
+          </TouchableOpacity>
+        ),
+        title: '',
+      })} />
       <Stack.Screen name="SelectActivity" component={SelectActivity} options={{ title: "" }} />
       <Stack.Screen name="ShowPattern" component={ShowPattern} options={{ title: "" }} />
       <Stack.Screen name="AdditionalInfo" component={AdditionalInfo} options={{ title: "" }} />
       <Stack.Screen name="NewPattern" component={NewPattern} options={{title: "" }} />
-      <Stack.Screen name="EachPost" component={EachPost} options= {
-      ({ navigation }) => ({
+      <Stack.Screen name="EachPost" component={EachPost} options={({ navigation }) => ({
         headerLeft: () => (
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ marginLeft: 10 }}>◀</Text>
+          <TouchableOpacity onPress={() => navigation.replace("AllPosts")}>
+            <Image source={require('./assets/backBtn.svg')} style={{width: 20, height: 20, tintColor: 'black'}}/>
           </TouchableOpacity>
         ),
         title: '',
-      })
-    } />
+        headerBackButtonDisplayMode: "default",
+        headerBackVisible: true,
+        // headerLeft:true,
+        // header: true,
+      })} />
       <Stack.Screen name="NewPost" component={NewPost} options={{ title: "" }} />
       <Stack.Screen name="AllPosts" component={AllPosts} options= {
       ({ navigation }) => ({
         headerLeft: () => (
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ marginLeft: 10 }}>◀</Text>
+          <TouchableOpacity onPress={() => navigation.replace("Drawer")} style={{marginLeft: 10, width: 30, height: 30}}>
+            <Image source={require('./assets/backBtn.svg')} style={{width: 20, height: 20, tintColor: 'black'}}/>
           </TouchableOpacity>
         ),
-        title: '',
+        title: '',  headerBackButtonDisplayMode: "default",
+        headerBackVisible: true,
       })
     } />
     </Stack.Navigator>

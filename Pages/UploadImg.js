@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import {StyleSheet,Text,View,ImageBackground,Dimensions,TouchableOpacity,Image,} from "react-native";
+import {StyleSheet,Text,View,ImageBackground,Dimensions,TouchableOpacity,Image, Alert,} from "react-native";
 import CustomButton from "../components/CustomButton";
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
+import * as Sharing from 'expo-sharing';
 // import RNFS from 'react-native-fs';
 
 // import { RNCamera } from 'react-native-camera';
@@ -14,6 +15,7 @@ export default function UploadImg({ navigation }) {
     const sweetHouse = require("../assets/background/sweetHouse_1.png");
     const [selectedImage, setSelectedImage] = useState(null);
     const [pdfPath, setPdfPath] = useState('');
+    const [showLoading, setShowLoading] = useState(false);
     // 이미지 선택 함수
     const pickImage = async () => {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -37,7 +39,7 @@ export default function UploadImg({ navigation }) {
     // 업로드 함수 수정
     const uploadImage = async () => {
         if (!selectedImage || !selectedImage.uri) {
-            alert("이미지를 선택하세요");
+            Alert.alert("이미지를 선택하세요");
             return;
         }
         const formData = new FormData();
@@ -48,8 +50,7 @@ export default function UploadImg({ navigation }) {
         });
 
         try {
-            console.log("이미지 업로드 요청 시작");
-
+            setShowLoading(true); // 로딩 상태 표시
             //서버 IP 주소로 아래 주소 변경 필요 
             const response = await fetch(`http://${EXPO_PUBLIC_IPHOST}:8080/model-server/predict`, {
                 method: "POST",
@@ -60,10 +61,10 @@ export default function UploadImg({ navigation }) {
             const result = await response.json();
             if (!response.ok) {
                 console.error("서버 오류:", response.status, response.statusText);
-                alert("서버 오류: 이미지 업로드 실패");
+                // Alert.alert("서버 오류: 이미지 업로드 실패");
                 return;
             }
-            // alert("업로드 성공: " + result.message);
+            setShowLoading(false);
             console.log(result.pdf_filename);
             setPdfPath(result.pdf_filename);
             console.log("pdfPath:"+pdfPath);
@@ -78,13 +79,13 @@ export default function UploadImg({ navigation }) {
         try {
         const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
           const fileName = pdfPath;
-          const fileUri = FileSystem.documentDirectory + fileName;
+          const fileUri = FileSystem.cacheDirectory + fileName;
     
           // 파일 다운로드
           const { uri } = await FileSystem.downloadAsync(fileUrl, fileUri);
           console.log('✅ 파일 저장 위치:', uri);
     
-          Alert.alert('다운로드 완료', 'PDF 파일이 저장되었습니다.');
+          Alert.alert('다운로드 완료', '파일 저장 위치: '+uri);
     
           // 파일 공유 또는 열기
           if (await Sharing.isAvailableAsync()) {
@@ -154,8 +155,11 @@ export default function UploadImg({ navigation }) {
                             <Text>pdf 다운로드</Text>
                         </TouchableOpacity> */}
                     </View>
-                    :
+                    :showLoading?
                     <View style={styles.upload}>
+                        <Text style={{fontSize:20, fontWeight:"bold"}}>도안 생성 중...</Text>
+                    </View>
+                    :<View style={styles.upload}>
                         {selectedImage && (
                             <Image source={{ uri: selectedImage.uri }} style={styles.img} />
                         )}
@@ -169,10 +173,13 @@ export default function UploadImg({ navigation }) {
                         <CustomButton title="저장/공유" onPress={downloadPDF} />
                         <CustomButton title="완료" onPress={() => navigation.replace("Drawer")} />
                     </View>
-                    :
-                    <View style={styles.btnContainer}>
-                        <CustomButton title="업로드" onPress={uploadImage} />
-                    </View>
+                    :showLoading?
+                        <View style={styles.btnContainer}>
+                        </View>
+                        :<View style={styles.btnContainer}>
+                            <CustomButton title="업로드" onPress={uploadImage} />
+                        </View>
+                    
                 }
             </ImageBackground>
         </View>

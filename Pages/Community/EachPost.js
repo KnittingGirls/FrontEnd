@@ -260,10 +260,10 @@ export default function EachPost({ navigation,route }) {
                         )}
                     </View>
                     <View style={styles.newreply}>
-                        <TouchableOpacity style={{ ...styles.replyBtn, flex: 1 }} onPress={() => navigation.replace('AllPosts')}>
+                        {/* <TouchableOpacity style={{ ...styles.replyBtn, flex: 1 }} onPress={() => navigation.goBack()}>
                             <AntDesign name={'back'} size={25} color={"black"} />
                         </TouchableOpacity>
-                        <View style={{flex:5}}></View>
+                        <View style={{flex:5}}></View> */}
                     </View>
                     <View style={styles.newreply}>
                         <TextInput
@@ -275,7 +275,9 @@ export default function EachPost({ navigation,route }) {
                             }
                             multiline={true}
                         />
-                        <TouchableOpacity style={{ ...styles.replyBtn,minHeight:60, flex: 1 }} onPress={() => commentPost(posts.id)}>
+                        <TouchableOpacity style={{ ...styles.replyBtn,minHeight:60, flex: 1 }} 
+                        onPress={token?() => commentPost(posts.id) 
+                        :() => {alert("로그인 후 이용해주세요")}}>
                             <FontAwesome name={'send'} size={25} color={"black"} />
                         </TouchableOpacity>
                     </View>

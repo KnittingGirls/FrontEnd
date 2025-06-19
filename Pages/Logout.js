@@ -35,7 +35,7 @@ export default function Logout({ navigation }) {
 
             savetoken(newtoken,newnickname,newuserId);
             loadToken();
-            Alert.alert("로그인이 완료되었습니다");
+            // Alert.alert("로그인이 완료되었습니다");
 
             // 로그인 성공 후 앱의 홈 등으로 이동
             navigation.reset({
