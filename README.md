@@ -7,7 +7,7 @@
 * React-Native 0.79.3
 * javascript
 * JVM 17 (gradle)
-* npx create-expo-app (React script-based)
+* npx create-expo-app (React script-based, expo-based)
 
 ## How to Test& get apk
 
@@ -25,24 +25,22 @@ npx expo install
 EXPO_PUBLIC_IPHOST={서버 IP}
 EXPO_POST_BASE_URL=http://{서버 IP}:8080/posts
 ```
-
-3-1. 개발 서버 실행(expo go환경에서 테스트)
+3. 아래 중 한 가지 설정하여 app-release.apk 생성
+3-1. prebuild, 곧바로 app-release.apk 생성 (android studio native)
 ```bash
-npm run start
+npm expo prebuild
+npx expo run:android --variant release
 ```
-3-2. 안드로이드 환경에서 테스트 실행(android studio native)
+3-3. app-debug.apk 기반으로 app-release.apk 생성
 ```bash
 npm expo prebuild
 npx expo run:android
-```
-4. (3-2 실행 후) android apk 생성
-```bash
 cd android
 ./gradlew assembleRelease
 ```
 apk 위치: android/app/build/outputs/apk/release/app-release.apk
-5. 생성된 apk 스마트폰으로 전송, 설치 및 실행
 
+4. 생성된 apk 스마트폰으로 전송, 설치 및 실행
 ---
 
 ## 배포 링크
