@@ -40,7 +40,8 @@
     "react-native-webview": "13.13.5",
     "@expo/metro-runtime": "~5.0.4",
     "@expo/metro-config": "~0.20.0",
-    "expo-sharing": "~13.1.5"
+    "expo-sharing": "~13.1.5",
+    "expo-media-library": "~17.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

@@ -84,8 +84,8 @@ const DrawerNavigator = () => {
     {/* {!token ? <Drawer.Screen name="Login" component={Login} options={{ ...options, drawerLabel: "로그인" }} /> : <Drawer.Screen name="Home" component={Home} options={{ ...options, drawerLabel: "홈화면" }} />} */}
     <Drawer.Screen name="NewPattern" component={NewPattern} options={{ ...options, drawerLabel: "도안 생성" }} />
     <Drawer.Screen name="AllPosts" component={AllPosts} options={{ ...options, drawerLabel: "커뮤니티" }} />
-    <Drawer.Screen name="MyPost" component={MyPost} options={{ ...options, drawerLabel: "내가 쓴 글" }} />
-    <Drawer.Screen name="ScrapList" component={ScrapList} options={{ ...options, drawerLabel: "스크랩한 글" }} />
+    {token&&(<Drawer.Screen name="MyPost" component={MyPost} options={{ ...options, drawerLabel: "내가 쓴 글" }} />)}
+    {token&&(<Drawer.Screen name="ScrapList" component={ScrapList} options={{ ...options, drawerLabel: "스크랩한 글" }} />)}
 </Drawer.Navigator>
 )}
 

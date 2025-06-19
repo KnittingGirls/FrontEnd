@@ -29,5 +29,7 @@
 # Add any project specific keep options here:
 # expo-file-system
 -keep class expo.modules.filesystem.** { *; }
+
 # expo-sharing
 -keep class expo.modules.sharing.** { *; }
+-keep class expo.modules.medialibrary.** { *; }

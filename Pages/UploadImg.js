@@ -5,6 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import * as Sharing from 'expo-sharing';
 // import RNFS from 'react-native-fs';
+import * as MediaLibrary from 'expo-media-library';
 
 // import { RNCamera } from 'react-native-camera';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -77,69 +78,58 @@ export default function UploadImg({ navigation }) {
     };
     const downloadPDF = async () => {
         try {
-        const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
+          const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
           const fileName = pdfPath;
-          const fileUri = FileSystem.cacheDirectory + fileName;
-    
-          // 파일 다운로드
-          const { uri } = await FileSystem.downloadAsync(fileUrl, fileUri);
-          console.log('✅ 파일 저장 위치:', uri);
-    
-          Alert.alert('다운로드 완료', '파일 저장 위치: '+uri);
-    
-          // 파일 공유 또는 열기
+
+          const permission = await MediaLibrary.requestPermissionsAsync();
+          if (!permission.granted) {
+            alert('저장 권한이 필요합니다.');
+            return;
+          }
+          const downloadPath = FileSystem.documentDirectory + fileName;
+          const downloadResumable = FileSystem.createDownloadResumable(
+            fileUrl, // 다운로드할 파일 URL
+            downloadPath, // 로컬에 저장할 경로
+            {}, // 헤더 등 옵션
+            (downloadProgress) => {
+                const progress =
+                  downloadProgress.totalBytesWritten /
+                  downloadProgress.totalBytesExpectedToWrite;
+                console.log(`📥 다운로드 진행률: ${Math.round(progress * 100)}%`);
+              }
+          );
+          const { uri } = await downloadResumable.downloadAsync();
+          console.log("📥 다운로드 위치:", uri);
+      
+        //   const info = await FileSystem.getInfoAsync(uri);
+        //   console.log("📏 파일 크기:", info.size);
+        //   if (info.size === 0) {
+        //     Alert.alert("파일 크기가 0입니다.");
+        //     return;
+        //   }
+      
+        //   const asset = await MediaLibrary.createAssetAsync(uri);
+        //   Alert.alert("📦 저장 성공:", asset);
+      
+        //   try {
+        //     await MediaLibrary.createAlbumAsync("Download", asset, false);
+        //     Alert.alert("📁 앨범에 추가 성공");
+        //   } catch (e) {
+        //     console.warn("앨범 추가 실패 (무시 가능):", e);
+        //   }
+      
+        //   Alert.alert("다운로드 완료!", "다운로드 폴더에서 확인하세요.");
+      
           if (await Sharing.isAvailableAsync()) {
             await Sharing.shareAsync(uri);
           } else {
-            Alert.alert('공유 불가', '이 디바이스에서는 공유 기능을 사용할 수 없습니다.');
+            Alert.alert("공유 불가", "이 디바이스는 공유 기능을 지원하지 않습니다.");
           }
-        } catch (error) {
-          console.error('❌ 파일 다운로드 실패:', error);
-          Alert.alert('오류', '파일 다운로드 중 오류가 발생했습니다.');
+      
+        } catch (e) {
+          console.error("❌ 전체 오류:", e);
+          Alert.alert("오류", "파일 다운로드 또는 저장 중 문제가 발생했습니다.");
         }
-    //   };
-    // const downloadPDF = async () => {
-    //     const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
-    //     const downloadDest = `${RNFS.DownloadDirectoryPath}/${pdfPath}`;
-    //     const options = {
-    //         fromUrl: fileUrl,
-    //         toFile: downloadDest,
-    //     };
-
-    //     try {
-    //         const result = await RNFS.downloadFile(options).promise;
-    //         if (result.statusCode === 200) {
-    //             Alert.alert('성공', '다운로드 폴더에 저장되었습니다!');
-    //         } else {
-    //             Alert.alert('실패', `에러 코드: ${result.statusCode}`);
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         Alert.alert('에러', '다운로드 중 문제가 발생했습니다.');
-    //     }
-
-        // try {
-        //     const fileUrl = `http://${EXPO_PUBLIC_IPHOST}:8000/pdfs/${pdfPath}`;
-        //     // const fileName = pdfPath;
-        //     const fileUri = FileSystem.documentDirectory + pdfPath;
-
-        //     // 파일 다운로드
-        //     const { uri,status } = await FileSystem.downloadAsync(fileUrl, fileUri);
-        //     console.log('✅ 파일 저장 위치:', uri);
-        //     if (status != 200) { console.log("문제있다",status); }
-
-        //     // alert('다운로드 완료', 'PDF 파일이 저장되었습니다.');
-
-        //     // 파일 공유 또는 열기
-        //     if (await Sharing.isAvailableAsync()) {
-        //         await Sharing.shareAsync(uri);
-        //     } else {
-        //         alert('공유 불가', '이 디바이스에서는 공유 기능을 사용할 수 없습니다.');
-        //     }
-        // } catch (error) {
-        //     console.error('❌ 파일 다운로드 실패:', error);
-        //     alert('오류', '파일 다운로드 중 오류가 발생했습니다.');
-        // }
     };
     
     return (
