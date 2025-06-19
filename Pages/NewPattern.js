@@ -12,7 +12,7 @@ export default function NewPattern({ navigation }) {
             <ImageBackground source={stepImg} resizeMode="cover" style={styles.image}>
                 <View style={{ flex: 12 }}></View>
                 <View style={styles.btnContainer}>
-                    <BigCustomBtn title="도안 생성" onPress={() => navigation.replace("SelectType")} />                    
+                    <BigCustomBtn title="도안 생성" onPress={() => navigation.push("SelectType")} />                    
                 </View>
             </ImageBackground>
         </View>

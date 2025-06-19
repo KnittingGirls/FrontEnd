@@ -62,7 +62,7 @@ export default function Login({ navigation }) {
     }, []);
 
     const openKakaoLogin = async () => {
-        console.log("버튼 확인");
+        // Alert.alert(`${EXPO_PUBLIC_IPHOST}`);
         const exist_sisttoken = await SecureStore.getItemAsync('userToken');
         const exist_userId = await SecureStore.getItemAsync('userId');
         const exist_userNickname = await SecureStore.getItemAsync('userNickname');
@@ -81,11 +81,12 @@ export default function Login({ navigation }) {
             return;
         }
         try{
-            console.log("BACKEND_LOGIN_URL: ",BACKEND_LOGIN_URL);
+            // Alert.alert("BACKEND_LOGIN_URL: ",BACKEND_LOGIN_URL);
             const response = await fetch(BACKEND_LOGIN_URL,{
                 method: "GET",
                 credentials: "omit", // 쿠키 안 보냄!
             });
+            // Alert.alert(response.url);
             // console.log("response: ",response);
             setLoginUrl(response.url);
             console.log("카카오 로그인 URL:", loginUrl);

@@ -149,7 +149,7 @@ export default function AllPosts({ navigation }) {
                     data={postWImage}
                     // keyExtractor={(item, index) => index.toString()}
                     renderItem={({ item,index }) => (
-                        <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.replace("EachPost", {postId:item.id}) }}>
+                        <TouchableOpacity style={styles.eachPost} onPress={() => { navigation.push("EachPost", {postId:item.id}) }}>
                             <Text style={{marginBottom:10, fontWeight:"bold",fontSize:15}}>{item.authorNickname}</Text>
                             {/* <Image source={item.imageData} style={{ flex: 2,backgroundColor:"gray",width:"auto"}} /> */}
                             <View style={{flex:1}}>
@@ -171,11 +171,18 @@ export default function AllPosts({ navigation }) {
                 />
             </View> : <></>}
             {/* 북마크 목록 */}
+            
             <View style={styles.btnContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => { if (showBookmark) { fetchPosts()}else {fetchBookmarks()}}}>
+                <TouchableOpacity style={styles.button} 
+                onPress={token?() => { if (showBookmark) { fetchPosts()}else {fetchBookmarks()}} 
+                :() => {alert("로그인 후 이용해주세요")}}>
                     <FontAwesome name={'bookmark'} size={25} color={"black"} />  
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => { navigation.replace("NewPost"); }}><AntDesign name={'edit'} size={25} color={"black"}/></TouchableOpacity>
+                <TouchableOpacity style={styles.button} 
+                onPress={token?() => { navigation.replace("NewPost"); } 
+                :() => {alert("로그인 후 이용해주세요")}}>
+                    <AntDesign name={'edit'} size={25} color={"black"}/>
+                    </TouchableOpacity>
             </View>
         </View>
     );
